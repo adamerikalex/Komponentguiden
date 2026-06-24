@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Komponentguiden - Sourcing av mekanik utan friktion</title>
+    
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* ==========================================================================
+           1. DESIGN IDENTITY & VARIABLES
+           ========================================================================== */
+        :root {
+            --slate-navy: #1e2633;
+            --slate-navy-light: #334155;
+            --indigo: #635bff;
+            --indigo-hover: #534ae8;
+            --turquoise: #008b8b;
+            --canvas: #f4f6f9;
+            --surface: #ffffff;
+            --border: #e2e8f0;
+            --border-hover: #cbd5e1;
+            
+            --font-main: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-meta: 'Roboto Mono', monospace;
+
+            --radius-sm: 6px;
+            --radius-md: 12px;
+            --radius-lg: 24px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background-color: var(--canvas);
+            color: var(--slate-navy);
+            line-height: 1.6;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* ==========================================================================
+           2. NAVIGATION
+           ========================================================================== */
+        nav {
+            padding: 16px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo {
+            font-family: var(--font-main);
+            font-weight: 800;
+            font-size: 20px;
+            color: var(--slate-navy);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            letter-spacing: -0.5px;
+        }
+
+        .logo-icon { color: var(--indigo); }
+
+        .nav-links { display: flex; gap: 4px; }
+        .nav-links a {
+            text-decoration: none;
+            color: var(--slate-navy-light);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            transition: all 0.2s;
+        }
+        .nav-links a:hover { color: var(--slate-navy); background-color: var(--canvas); }
+        .nav-links a.active { background-color: rgba(99, 91, 255, 0.08); color: var(--indigo); }
+
+        /* ==========================================================================
+           3. PAGE SYSTEM & TYPOGRAPHY
+           ========================================================================== */
+        .page-content { display: none; animation: fadeIn 0.4s ease; }
+        .page-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+        h1, h2, h3, h4 { color: var(--slate-navy); letter-spacing: -0.03em; font-weight: 800; }
+        p { color: var(--slate-navy-light); }
+        .metadata { font-family: var(--font-meta); font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: var(--turquoise); font-weight: 700; margin-bottom: 16px; display: block; }
+
+        .btn-primary {
+            background: var(--indigo);
+            color: white;
+            padding: 14px 28px;
+            border-radius: var(--radius-sm);
+            font-size: 15px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.2s;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(99, 91, 255, 0.15);
+        }
+        .btn-primary:hover { background: var(--indigo-hover); transform: translateY(-1px); box-shadow: 0 6px 16px rgba(99, 91, 255, 0.25); }
+
+        /* ==========================================================================
+           4. PAGE: START (LANDNINGSSIDA)
+           ========================================================================== */
+        
+        .hero-section {
+            padding: 140px 0 100px;
+            text-align: left;
+        }
+
+        .hero-grid {
+            display: grid;
+            gap: 40px;
+            align-items: center;
+        }
+
+        @media (min-width: 768px) {
+            .hero-grid { grid-template-columns: 1.15fr 0.85fr; gap: 60px; }
+        }
+
+        .hero-section h1 {
+            font-size: 56px;
+            line-height: 1.15;
+            margin-bottom: 24px;
+            letter-spacing: -1.5px;
+        }
+
+        .hero-section p {
+            font-size: 18px;
+            margin: 0 0 40px 0;
+            line-height: 1.7;
+        }
+
+        /* Scrollytelling med Statisk Wireframe */
+        .scrolly-wrapper {
+            position: relative;
+            background: var(--surface);
+            height: 300vh;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .scrolly-container {
+            position: sticky;
+            top: 20vh;
+            height: 60vh;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .scrolly-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            width: 100%;
+            align-items: center;
+        }
+
+        .scrolly-visual {
+            height: 400px;
+            position: relative;
+        }
+
+        .mockup-window {
+            width: 100%;
+            height: 100%;
+            background: var(--surface);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.06);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .mockup-bar {
+            background: #f8fafc;
+            padding: 14px 18px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .mac-dot { width: 10px; height: 10px; border-radius: 50%; }
+        .mac-dot.red { background: #ff5f56; }
+        .mac-dot.yellow { background: #ffbd2e; }
+        .mac-dot.green { background: #27c93f; }
+        .mock-url { font-size: 12px; color: #94a3b8; font-family: var(--font-meta); margin-left: 12px; }
+
+        .mock-body {
+            display: flex;
+            flex: 1;
+        }
+
+        .mock-sidebar {
+            width: 25%;
+            border-right: 1px solid var(--border);
+            padding: 24px 16px;
+            background: #fcfcfd;
+        }
+
+        .mock-pill { height: 10px; border-radius: 5px; background: var(--border); margin-bottom: 16px; }
+        .mock-pill.short { width: 70%; }
+
+        .mock-main {
+            flex: 1;
+            padding: 30px;
+        }
+
+        .mock-box-row { display: flex; gap: 16px; margin-bottom: 24px; }
+        .mock-box { flex: 1; height: 60px; border-radius: var(--radius-sm); }
+        .mock-box.blue { background: #eef2ff; }
+        .mock-box.green { background: #f0fdf4; }
+        .mock-line { height: 10px; border-radius: 5px; background: var(--canvas); margin-bottom: 12px; }
+
+        .scrolly-content { position: relative; height: 280px; }
+        .content-layer { position: absolute; top: 0; left: 0; width: 100%; opacity: 0; pointer-events: none; transition: all 0.5s ease; transform: translateY(15px); }
+        .content-layer.active { opacity: 1; pointer-events: auto; transform: translateY(0); }
+        
+        .content-layer h2 { font-size: 32px; margin-bottom: 16px; }
+        .content-layer p { font-size: 16px; margin-bottom: 16px; }
+        
+        .feature-list { list-style: none; }
+        .feature-list li { display: flex; gap: 12px; margin-bottom: 12px; font-weight: 500; font-size: 14px; align-items: flex-start; color: var(--slate-navy); }
+        .feature-list i { color: var(--turquoise); flex-shrink: 0; }
+
+        /* Segment 3: Vårt löfte till er (Säkerhet) */
+        .security-section {
+            padding: 100px 0;
+            background: var(--canvas);
+        }
+
+        .security-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; }
+        .sec-card {
+            background: var(--surface);
+            padding: 40px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border);
+        }
+        .sec-card i { color: var(--indigo); margin-bottom: 20px; display: block; }
+        .sec-card h3 { margin-bottom: 12px; font-size: 20px; }
+        .sec-card p { font-size: 15px; }
+
+        /* Segment 4: Intent-Formulär */
+        .intent-section {
+            padding: 80px 0 120px;
+            background: var(--surface); 
+        }
+
+        .intent-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .form-card {
+            background: #f8fafc; 
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 60px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .form-step { margin-bottom: 40px; padding-bottom: 40px; border-bottom: 1px solid var(--border); }
+        .form-step:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+
+        .step-title {
+            font-size: 20px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .step-badge {
+            background: rgba(99, 91, 255, 0.1);
+            color: var(--indigo);
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-sm);
+            font-family: var(--font-meta);
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        /* Taggar & Inputs */
+        .tag-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
+        .tag-label { cursor: pointer; position: relative; }
+        .tag-label input { position: absolute; opacity: 0; }
+        
+        .tag-content {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: var(--surface); 
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--slate-navy-light);
+            transition: all 0.2s;
+        }
+
+        .tag-label input:checked + .tag-content {
+            background-color: rgba(99, 91, 255, 0.05);
+            border-color: var(--indigo);
+            color: var(--indigo);
+        }
+        .tag-label:hover .tag-content { border-color: var(--border-hover); }
+
+        .input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+        .input-field {
+            width: 100%;
+            padding: 12px 16px;
+            background-color: var(--surface); 
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-family: var(--font-main);
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        .input-field:focus { outline: none; border-color: var(--indigo); box-shadow: 0 0 0 3px rgba(99, 91, 255, 0.1); }
+        .input-label { display: block; font-weight: 600; margin-bottom: 8px; font-size: 13px; color: var(--slate-navy); }
+
+        .file-upload {
+            border: 1px dashed var(--border-hover);
+            border-radius: var(--radius-md);
+            padding: 40px;
+            text-align: center;
+            background: var(--surface); 
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .file-upload:hover { border-color: var(--indigo); background: rgba(99, 91, 255, 0.02); }
+
+        /* ==========================================================================
+           5. FOOTER
+           ========================================================================== */
+        footer {
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            padding: 60px 0 40px;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-col h4 { font-size: 14px; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 1px; color: var(--slate-navy-light); font-family: var(--font-meta); }
+        .footer-col ul { list-style: none; }
+        .footer-col ul li { margin-bottom: 12px; }
+        .footer-col ul a { text-decoration: none; color: var(--slate-navy-light); font-size: 14px; transition: 0.2s; }
+        .footer-col ul a:hover { color: var(--indigo); }
+        
+        .footer-bottom {
+            border-top: 1px solid var(--border);
+            padding-top: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            color: var(--slate-navy-light);
+        }
+
+        /* ==========================================================================
+           6. PAGES: CONCIERGE, OM OSS & STRATEGI
+           ========================================================================== */
+        .concierge-hero {
+            background: var(--slate-navy);
+            color: white;
+            padding: 100px 0;
+            border-radius: var(--radius-lg);
+            margin: 40px 24px;
+            text-align: center;
+        }
+        .concierge-hero h1 { color: white; font-size: 48px; margin-bottom: 20px; }
+        .concierge-hero p { color: #cbd5e1; font-size: 18px; max-width: 700px; margin: 0 auto 40px auto; line-height: 1.6; }
+        .concierge-features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; margin-top: 40px; }
+        .c-feat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+
+        .page-header { padding: 80px 0 40px; text-align: center; max-width: 700px; margin: 0 auto; }
+        .page-header h1 { font-size: 42px; margin-bottom: 16px; }
+        .strategy-timeline { max-width: 800px; margin: 0 auto 100px; }
+        .strategy-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 40px; margin-bottom: 24px; }
+
+        /* Custom layout för "Om oss" */
+        .om-oss-section { padding: 100px 0; }
+        .om-oss-grid { display: grid; gap: 60px; align-items: center; }
+        
+        @media (min-width: 768px) {
+            .om-oss-grid.text-left { grid-template-columns: 1.2fr 0.8fr; }
+            .om-oss-grid.text-right { grid-template-columns: 0.8fr 1.2fr; }
+        }
+
+        .blend-img {
+            width: 100%;
+            display: block;
+            margin: 0 auto;
+            mix-blend-mode: multiply; 
+        }
+
+        /* Utility */
+        .text-center { text-align: center; }
+        .mt-2 { margin-top: 24px; }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="container" style="display:flex; justify-content:space-between; width:100%; align-items:center;">
+            <div class="logo" onclick="Navigation.showPage('start')">
+                <i data-lucide="layers" class="logo-icon"></i> Komponentguiden
+            </div>
+            <div class="nav-links">
+                <a onclick="Navigation.showPage('start')" id="nav-start" class="active">Start</a>
+                <a onclick="Navigation.showPage('concierge')" id="nav-concierge">Concierge</a>
+                <a onclick="Navigation.showPage('about')" id="nav-about">Om oss</a>
+                <a onclick="Navigation.showPage('strategy')" id="nav-strategy">Vår strategi</a>
+            </div>
+        </div>
+    </nav>
+
+    <div id="page-start" class="page-content active">
+        
+        <section class="hero-section container">
+            <div class="hero-grid">
+                <div>
+                    <h1>Inköp av industriell tillverkningsförmåga, helt utan friktion.</h1>
+                    <p>Vi matchar ert behov mot vårt nätverk av industriell legotillverkning över hela Sverige. Vår databas täcker alla företag inom industriell kontraktstillverkning, oavsett maskinpark, ISO-certifieringar eller storlek på produktion. Allt du behöver göra är att definiera krav, ladda upp ritning och få 5 validerade matchningar inom 48 timmar.</p>
+                    <button class="btn-primary" onclick="document.getElementById('intent-form').scrollIntoView({behavior: 'smooth'})">
+                        Starta matchning <i data-lucide="arrow-right" size="16"></i>
+                    </button>
+                </div>
+                <div style="display: flex; justify-content: flex-end; align-items: center; position: relative;">
+                    <img src="part.png" alt="Mekanisk komponent" class="blend-img" style="max-width: 320px; object-fit: contain; transform: scale(1.01) translateX(12%); transform-origin: center right;">
+                </div>
+            </div>
+        </section>
+
+        <section class="scrolly-wrapper" id="interactSection">
+            <div class="scrolly-container">
+                <div class="container scrolly-grid">
+                    
+                    <div class="scrolly-content">
+                        <div class="content-layer active" id="text-l1">
+                            <span class="metadata">Steg 01</span>
+                            <h2>Definiera behovet</h2>
+                            <p>Ladda enkelt upp er ritning och ange specifikationer. Kravställ på samma sätt som om det vore er egna upphandling.</p>
+                            <ul class="feature-list" style="margin-top: 16px;">
+                                <li><i data-lucide="check"></i> Geometri, material och toleranser</li>
+                                <li><i data-lucide="check"></i> Formella certifikatkrav (t.ex. ISO 3834)</li>
+                                <li><i data-lucide="check"></i> Efterfrågad ledtid och volym</li>
+                            </ul>
+                        </div>
+                        <div class="content-layer" id="text-l2">
+                            <span class="metadata">Steg 02</span>
+                            <h2>Datadriven matchning</h2>
+                            <ul class="feature-list" style="margin-top: 16px;">
+                                <li><i data-lucide="check"></i> Sökning på produktionsteknik & maskinpark</li>
+                                <li><i data-lucide="check"></i> Filtrering på finansiell stabilitet</li>
+                                <li><i data-lucide="check"></i> Kravställning på certifikat & prestanda</li>
+                            </ul>
+                        </div>
+                        <div class="content-layer" id="text-l3">
+                            <span class="metadata">Steg 03</span>
+                            <h2>5 förslag inom 48 timmar</h2>
+                            <ul class="feature-list" style="margin-top: 16px;">
+                                <li><i data-lucide="check"></i> Kostnadsfritt för inköpare</li>
+                                <li><i data-lucide="check"></i> Inget juridiskt åtagande</li>
+                                <li><i data-lucide="check"></i> Ni behåller kundrelationen</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="scrolly-visual">
+                        <div class="mockup-window">
+                            <div class="mockup-bar">
+                                <div class="mac-dot red"></div>
+                                <div class="mac-dot yellow"></div>
+                                <div class="mac-dot green"></div>
+                                <div class="mock-url">komponentguiden.se/matchning</div>
+                            </div>
+                            <div class="mock-body">
+                                <div class="mock-sidebar">
+                                    <div class="mock-pill"></div>
+                                    <div class="mock-pill short"></div>
+                                    <div class="mock-pill" style="margin-top: 32px;"></div>
+                                </div>
+                                <div class="mock-main">
+                                    <div class="mock-box-row">
+                                        <div class="mock-box blue"></div>
+                                        <div class="mock-box green"></div>
+                                    </div>
+                                    <div class="mock-line" style="width: 100%;"></div>
+                                    <div class="mock-line" style="width: 100%;"></div>
+                                    <div class="mock-line" style="width: 80%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <section class="security-section">
+            <div class="container">
+                <div class="text-center" style="margin-bottom: 50px;">
+                    <h2>Vårt löfte till er</h2>
+                </div>
+                <div class="security-grid">
+                    <div class="sec-card">
+                        <i data-lucide="scale" size="28"></i>
+                        <h3>Oberoende aktör</h3>
+                        <p>Vi är agnostiska och matchar enbart baserat på era krav och leverantörens faktiska förmåga.</p>
+                    </div>
+                    <div class="sec-card">
+                        <i data-lucide="zap" size="28"></i>
+                        <h3>Eliminerad admin</h3>
+                        <p>Vår databas och proprietära algoritm ersätter tidskrävande research och garanterar ett anpassat urval redo för er att utforska.</p>
+                    </div>
+                    <div class="sec-card">
+                        <i data-lucide="lock" size="28"></i>
+                        <h3>Säkerhet i fokus</h3>
+                        <p>Ritningar hanteras med sekretess, lagras krypterat och raderas enligt uppsatta tidsramar. Leverantörer måste godkänna NDA för att ta del av ritningsunderlag.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="intent-form" class="intent-section">
+            <div class="container">
+                <div class="intent-header">
+                    <h2>Specificera er förfrågan</h2>
+                    <p>Fyll i formuläret nedan för att initiera datamatchningen.</p>
+                </div>
+
+                <div class="form-card">
+                    
+                    <div class="form-step">
+                        <h3 class="step-title"><span class="step-badge">1</span> Företagsinformation</h3>
+                        <div class="input-row">
+                            <div><label class="input-label">Organisationsnummer</label><input type="text" class="input-field" placeholder="556XXX-XXXX"></div>
+                            <div><label class="input-label">Företagsnamn</label><input type="text" class="input-field" placeholder="Företag AB"></div>
+                        </div>
+                        <div class="input-row">
+                            <div><label class="input-label">Företagsmail</label><input type="email" class="input-field" placeholder="namn@foretag.se"></div>
+                            <div><label class="input-label">Telefonnummer (frivilligt)</label><input type="tel" class="input-field" placeholder="070-XXX XX XX"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-step">
+                        <h3 class="step-title"><span class="step-badge">2</span> Projekt & material</h3>
+                        <div style="margin-bottom: 24px;">
+                            <label class="input-label">Projektnamn / Benämning</label>
+                            <input type="text" class="input-field" placeholder="T.ex. Kylfläns v.2">
+                        </div>
+                        <label class="input-label">Primär bearbetningsmetod</label>
+                        <div class="tag-grid">
+                            <label class="tag-label"><input type="radio" name="method" checked><span class="tag-content">Skärande bearbetning</span></label>
+                            <label class="tag-label"><input type="radio" name="method"><span class="tag-content">Plåt & svets</span></label>
+                            <label class="tag-label"><input type="radio" name="method"><span class="tag-content">Gjutning</span></label>
+                            <label class="tag-label"><input type="radio" name="method"><span class="tag-content">Formsprutning</span></label>
+                        </div>
+                        <label class="input-label" style="margin-top: 16px;">Materialgrupp</label>
+                        <div class="tag-grid">
+                            <label class="tag-label"><input type="radio" name="material" checked><span class="tag-content">Aluminium</span></label>
+                            <label class="tag-label"><input type="radio" name="material"><span class="tag-content">Stål</span></label>
+                            <label class="tag-label"><input type="radio" name="material"><span class="tag-content">Rostfritt</span></label>
+                            <label class="tag-label"><input type="radio" name="material"><span class="tag-content">Titan / Special</span></label>
+                            <label class="tag-label"><input type="radio" name="material"><span class="tag-content">Plast</span></label>
+                        </div>
+                    </div>
+
+                    <div class="form-step">
+                        <h3 class="step-title"><span class="step-badge">3</span> Kvalitet & certifiering</h3>
+                        <div class="input-row">
+                            <div>
+                                <label class="input-label">Toleranskrav</label>
+                                <div class="tag-grid">
+                                    <label class="tag-label"><input type="radio" name="tol" checked><span class="tag-content">Standard (ISO)</span></label>
+                                    <label class="tag-label"><input type="radio" name="tol"><span class="tag-content">Fina (&lt; 0.01mm)</span></label>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="input-label">Krav på ytbehandling?</label>
+                                <input type="text" class="input-field" placeholder="T.ex. Anodisering, lackering">
+                            </div>
+                        </div>
+                        <label class="input-label" style="margin-top: 16px;">Formella certifikatkrav på leverantör</label>
+                        <div class="tag-grid">
+                            <label class="tag-label"><input type="checkbox"><span class="tag-content">ISO 9001 (Kvalitet)</span></label>
+                            <label class="tag-label"><input type="checkbox"><span class="tag-content">ISO 14001 (Miljö)</span></label>
+                            <label class="tag-label"><input type="checkbox"><span class="tag-content">ISO 3834 (Svets)</span></label>
+                            <label class="tag-label"><input type="checkbox"><span class="tag-content">AS9100 (Försvar)</span></label>
+                            <label class="tag-label"><input type="checkbox"><span class="tag-content">ISO 13485 (MedTech)</span></label>
+                        </div>
+                    </div>
+
+                    <div class="form-step">
+                        <h3 class="step-title"><span class="step-badge">4</span> Volym & leverans</h3>
+                        <div class="input-row">
+                            <div>
+                                <label class="input-label">Önskad volym</label>
+                                <select class="input-field">
+                                    <option>Prototyp (1-5 st)</option>
+                                    <option>Liten serie (10-100 st)</option>
+                                    <option>Mellan/Stor serie (&gt;100 st)</option>
+                                    <option>Löpande avrop</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="input-label">Tidsram</label>
+                                <select class="input-field">
+                                    <option>Akut / Brandsläckning</option>
+                                    <option>Inom 2-4 veckor</option>
+                                    <option>Inom 1-3 månader</option>
+                                    <option>Utforskande förfrågan</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-step" style="border-bottom: none; margin-bottom: 0; padding-bottom: 0;">
+                        <h3 class="step-title"><span class="step-badge">5</span> Ritningar & filer</h3>
+                        <div class="file-upload">
+                            <i data-lucide="upload" size="32" style="color:var(--slate-navy-light); margin-bottom: 12px;"></i>
+                            <h4 style="font-size: 16px; margin-bottom: 4px;">Dra och släpp underlag</h4>
+                            <p style="font-size: 13px;">Accepterade format: PDF, STEP, IGES (Max 50MB)</p>
+                        </div>
+                        
+                        <div style="margin-top: 24px; display: flex; gap: 12px; align-items: flex-start;">
+                            <input type="checkbox" id="nda" checked style="margin-top: 4px;">
+                            <label for="nda" style="font-size: 13px; color: var(--slate-navy-light);">
+                                <strong>Sekretessgodkännande:</strong> Jag godkänner att uppladdat material delas under sekretess med upp till 5 utvalda leverantörer för matchning.
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-2" style="padding-top: 24px;">
+                        <button class="btn-primary" style="width: 100%; font-size: 16px; padding: 18px;">Skicka förfrågan <i data-lucide="arrow-right" size="16"></i></button>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+        
+        <footer>
+            <div class="container">
+                <div class="footer-grid">
+                    <div class="footer-col">
+                        <div class="logo" style="margin-bottom: 16px;">
+                            <i data-lucide="layers" class="logo-icon"></i> Komponentguiden
+                        </div>
+                        <p style="font-size: 14px; max-width: 300px;">Vi kopplar samman industriella inköpare med Sveriges främsta legotillverkare. Säker, datadriven och friktionsfri sourcing.</p>
+                    </div>
+                    <div class="footer-col">
+                        <h4>Plattformen</h4>
+                        <ul>
+                            <li><a href="#" onclick="Navigation.showPage('start')">Start</a></li>
+                            <li><a href="#" onclick="Navigation.showPage('concierge')">Concierge</a></li>
+                            <li><a href="#" onclick="Navigation.showPage('about')">Om oss</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-col">
+                        <h4>Kontakt</h4>
+                        <ul>
+                            <li><a href="mailto:hej@komponentguiden.se">hej@komponentguiden.se</a></li>
+                            <li><a href="#">Support</a></li>
+                            <li><a href="#">Sekretesspolicy</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <span>&copy; 2026 Komponentguiden AB. Alla rättigheter reserverade.</span>
+                    <span style="display: flex; gap: 16px;">
+                        <a href="#" style="color: var(--slate-navy-light);"><i data-lucide="linkedin" size="18"></i></a>
+                    </span>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <div id="page-concierge" class="page-content">
+        <div class="concierge-hero">
+            <span class="metadata" style="color: var(--turquoise);">Premium Sourcing</span>
+            <h1>Låt oss ta helhetsansvaret.</h1>
+            <p>För strategiska inköp och komplexa projekt där ni behöver en betrodd partner som eliminerar friktion. Vi stöttar i hela processen från uppladdad ritning till levererade komponenter på er lastkaj.</p>
+            <button class="btn-primary" style="background: white; color: var(--slate-navy); box-shadow: none;">
+                Kontakta oss <i data-lucide="mail"></i>
+            </button>
+        </div>
+
+        <div class="container" style="margin-bottom: 100px;">
+            <div style="max-width: 800px; margin: 0 auto 60px auto; text-align: left; font-size: 16px; color: var(--slate-navy-light);">
+                <p style="margin-bottom: 20px;">Svansen av spend och upphandlingar av små volymer kan vara utmanande i det dagliga arbetet. Oavsett om orsaken är begränsad intern kapacitet, oförutsedda produktionsstopp eller avsaknad av rätt produktionsförmåga skapar dessa inköp onödig belastning på er inköpsavdelning.</p>
+                <p>Vi förstår processen för strategiskt inköp och har genom mängder av data och avancerade algoritmer lyckats kartlägga det industriella landskapet inom lego- och kontraktstillverkning. Vi ger er samma kontroll och precisa utförande av inköp i små volymer som ni själva tillämpar på era strategiska leverantörer. Allt som krävs är en tydlig specifikation, resten sköter vi.</p>
+            </div>
+
+            <div class="concierge-features">
+                <div class="c-feat-card">
+                    <i data-lucide="network" size="24" style="color: var(--indigo); margin-bottom: 12px;"></i>
+                    <h3>En enda motpart</h3>
+                    <p>Slipp administrationen med att lägga upp nya leverantörer i ert affärssystem. Vi tar plats som er huvudleverantör och konsoliderar små volymer.</p>
+                </div>
+                <div class="c-feat-card">
+                    <i data-lucide="shield-check" size="24" style="color: var(--indigo); margin-bottom: 12px;"></i>
+                    <h3>Kvalitetsgaranti</h3>
+                    <p>Vi bär det fulla ansvaret. Vi kvalitetssäkrar produktionen, hanterar avvikelser och säkerställer att resultatet och leveransen möter era förväntningar.</p>
+                </div>
+                <div class="c-feat-card">
+                    <i data-lucide="award" size="24" style="color: var(--indigo); margin-bottom: 12px;"></i>
+                    <h3>Validerat nätverk</h3>
+                    <p>Vi använder vårt noga utvalda leverantörer med vilka vi har ett nära samarbete. Överlåt platsbesök, revision och övergripande kvalitetskontroll till oss.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="page-about" class="page-content">
+        
+        <section class="om-oss-section" style="background: var(--surface);">
+            <div class="container om-oss-grid text-left">
+                <div class="om-oss-text">
+                    <span class="metadata">Vårt syfte</span>
+                    <h2 style="font-size: 32px; margin-bottom: 20px;">Att bevara svenskt industrihantverk</h2>
+                    <div style="font-size: 15px; color: var(--slate-navy-light); line-height: 1.6;">
+                        <p style="margin-bottom: 15px;">Den svenska tillverkningsindustrin står inför ett paradigmskifte. Verkstäder och tillverkande företag med årtionden av erfarenhet genomgår just nu utmanande generationsskiften. Dessutom bromsas deras utveckling av en begränsad marknadsförings- och säljförmåga, även om den industriella och produktionstekniska kunskapen är hög.</p>
+                        <p style="margin-bottom: 15px;">Konsekvensen blir att dessa företag inte kan dra nytta av de strukturella trenderna i form av hemtagning av produktion, försvarsupprustning och infrastrukturinvesteringar. Uppsidan tillfaller endast de företag som har resurser och kompetens att investera i affärsutveckling - Det vill vi ändra på.</p>
+                        <p>På andra sidan kämpar industriella köpare på stora bolag med tid- och resursbrist. Att upphandla prototypserier eller hitta ny kapacitet för mindre projekt driver administration. Ute i landet står samtidigt tusentals skickliga SME-verkstäder med avancerade maskinparker, men som saknar den digitala infrastrukturen för att fånga dessa förfrågningar.</p>
+                    </div>
+                </div>
+                <div class="om-oss-visual">
+                    <img src="map.png" alt="Sverigekarta" class="blend-img" style="max-width: 320px;">
+                </div>
+            </div>
+        </section>
+
+        <section class="om-oss-section" style="background: var(--canvas); border-top: 1px solid var(--border);">
+            <div class="container om-oss-grid text-right">
+                <div class="om-oss-visual">
+                    <img src="network.png" alt="Fabriksnätverk" class="blend-img" style="max-width: 450px;">
+                </div>
+                <div class="om-oss-text">
+                    <span class="metadata">Produkt</span>
+                    <h2 style="font-size: 32px; margin-bottom: 20px;">Vi stänger gapet</h2>
+                    <div style="font-size: 15px; color: var(--slate-navy-light); line-height: 1.6;">
+                        <p style="margin-bottom: 15px;">Komponentguiden agerar som den digitala förmedlaren mellan inköparens tekniska krav och verkstadsgolvets faktiska förmåga.</p>
+                        <p>Vår matchningstjänst är helt gratis för inköpare då vårt primära mål är att sänka trösklarna för svensk produktion och säkra det industriella arvet. Genom att ta bort friktionen frigör vi tid för inköparna och ger SME-företagen tillgång till ordervolymer de annars aldrig hade fått chans att lämna anbud på. Vi bygger ekosystemet som låter industrin växa in i framtiden.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="om-oss-section" style="background: var(--surface); border-top: 1px solid var(--border);">
+            <div class="container om-oss-grid text-left">
+                <div class="om-oss-text">
+                    <span class="metadata">Incitament</span>
+                    <h2 style="font-size: 32px; margin-bottom: 20px;">Win win</h2>
+                    <div style="font-size: 15px; color: var(--slate-navy-light); line-height: 1.6;">
+                        <p>Utöver att koppla samman köpare och säljare finns även en ekonomisk vinning, som gynnar alla. Genom att dra nytta av ett stort fragmenterat supply kan underutnyttjad kapacitet i produktion skapa affärer till attraktiva priser. Nyckeln är teknik, data och en marknadsplats som skapar förutsättningar.</p>
+                    </div>
+                </div>
+                <div class="om-oss-visual"></div>
+            </div>
+        </section>
+
+        <section class="om-oss-section" style="background: var(--canvas); border-top: 1px solid var(--border); padding-bottom: 100px;">
+            <div class="container om-oss-grid text-right">
+                <div class="om-oss-visual">
+                    <img src="team.png" alt="Vårt Team" style="width: 100%; max-width: 450px; border-radius: var(--radius-md); box-shadow: 0 10px 30px rgba(0,0,0,0.05);">
+                </div>
+                <div class="om-oss-text">
+                    <span class="metadata">Team</span>
+                    <h2 style="font-size: 32px; margin-bottom: 20px;">Personerna bakom tjänsten</h2>
+                    <div style="font-size: 15px; color: var(--slate-navy-light); line-height: 1.6;">
+                        <p style="margin-bottom: 15px;">Vi är två nyfikna entreprenörer som drivs av att tillämpa ny teknik i gott syfte. Vi ser styrkan i digital distribution samtidigt som vi är stolta över den svenska kulturen av industriell produktion som satt Sverige på kartan och skapat förutsättningar för så mycket annat.</p>
+                        <p>Komponentguiden är ett koncept som gynnar alla inblandade, och "Concierge" är erbjudandet där vi själva på sikt ska bli en del av ekosystemet - Genom att eliminera friktion och administration för köparna skapar vi ytterligare värde.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <div id="page-strategy" class="page-content">
+        <div class="container">
+            <div class="page-header" style="padding: 80px 0 40px; text-align: center; max-width: 700px; margin: 0 auto;">
+                <span class="metadata">Intern roadmap</span>
+                <h1>Det asymmetriska värdet</h1>
+                <p>Så bygger vi en oöverträffad vallgrav genom data och industriell konsolidering.</p>
+            </div>
+
+            <div class="strategy-timeline" style="max-width: 800px; margin: 0 auto 100px;">
+                
+                <div class="strategy-card" style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 40px; margin-bottom: 24px;">
+                    <span class="metadata" style="color: var(--slate-navy-light);">Steg 1</span>
+                    <h2>Intent-motorn</h2>
+                    <p>Vi erbjuder gratis matchning för att samla "Intent-data". Vi kartlägger exakt vilka material, volymer och ISO-certifikat som saknar kapacitet på marknaden.</p>
+                </div>
+
+                <div class="strategy-card" style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 40px; margin-bottom: 24px;">
+                    <span class="metadata" style="color: var(--slate-navy-light);">Steg 2</span>
+                    <h2>Den hanterade marknadsplatsen (concierge)</h2>
+                    <p>Vi agerar huvudleverantör för stora OEMs tail-spend. Vi tar en transaktionsmarginal, sköter QA och använder exklusivt vår shortlist av validerade leverantörer.</p>
+                </div>
+
+                <div class="strategy-card" style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 40px; margin-bottom: 24px;">
+                    <span class="metadata" style="color: var(--indigo);">Steg 3</span>
+                    <h2>Datadriven M&A</h2>
+                    <p>Med full förståelse för utbudet (Metal Base) och efterfrågan (Komponentguiden) vet vi exakt vilken nisch som är underförsörjd. Vi identifierar "Lazy Twins", förvärvar dem och fyller dem omedelbart med vår orderbok.</p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        // 1. Navigation SPA Logic
+        const Navigation = {
+            showPage: function(pageId) {
+                document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
+                document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+                
+                const targetPage = document.getElementById('page-' + pageId);
+                const targetNavLink = document.getElementById('nav-' + pageId);
+                
+                if (targetPage) targetPage.classList.add('active');
+                if (targetNavLink) targetNavLink.classList.add('active');
+                
+                window.scrollTo(0,0);
+            }
+        };
+
+        // 2. Scrollytelling Effekt
+        window.addEventListener('scroll', () => {
+            const section = document.getElementById('interactSection');
+            if (!section || !document.getElementById('page-start').classList.contains('active')) return;
+            
+            const progress = (window.scrollY - section.offsetTop) / (section.offsetHeight - window.innerHeight);
+            
+            if (progress >= 0 && progress <= 1) {
+                let stage = 1;
+                if (progress > 0.33 && progress < 0.66) stage = 2;
+                if (progress >= 0.66) stage = 3;
+                updateScrollyUI(stage);
+            }
+        });
+
+        function updateScrollyUI(stage) {
+            document.querySelectorAll('.content-layer').forEach(t => t.classList.remove('active'));
+            const currentText = document.getElementById('text-l' + stage);
+            if (currentText) currentText.classList.add('active');
+        }
+    </script>
+</body>
+</html>
