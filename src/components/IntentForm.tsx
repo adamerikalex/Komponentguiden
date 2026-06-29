@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { ArrowRight, Upload } from "lucide-react";
+import { supabase } from "@/lib/supabase";
 
 type FormState = {
   orgNr: string;
@@ -52,6 +53,9 @@ export default function IntentForm() {
     timeframe: "Inom 2-4 veckor",
     ndaAccepted: true,
   });
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const set = (key: keyof FormState, value: FormState[typeof key]) =>
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -64,10 +68,52 @@ export default function IntentForm() {
         : [...form.certs, cert]
     );
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: { preventDefault(): void }) => {
     e.preventDefault();
-    console.log("Form submitted:", form);
+    setSubmitting(true);
+    setSubmitError(null);
+
+    const { error } = await supabase.from("intent_requests").insert({
+      org_nr: form.orgNr || null,
+      company_name: form.companyName || null,
+      contact_email: form.email,
+      contact_phone: form.phone || null,
+      project_name: form.projectName || null,
+      method: form.method || null,
+      material: form.material || null,
+      tolerance: form.tolerance || null,
+      surface_treatment: form.surfaceTreatment || null,
+      certs: form.certs.length > 0 ? form.certs : null,
+      volume: form.volume || null,
+      timeframe: form.timeframe || null,
+      nda_accepted: form.ndaAccepted,
+    });
+
+    setSubmitting(false);
+
+    if (error) {
+      setSubmitError("Något gick fel. Försök igen eller kontakta oss direkt.");
+    } else {
+      setSubmitted(true);
+    }
   };
+
+  if (submitted) {
+    return (
+      <section id="intent-form" className="intent-section">
+        <div className="container">
+          <div className="form-card text-center" style={{ padding: "64px 32px" }}>
+            <div style={{ fontSize: "48px", marginBottom: "16px" }}>✓</div>
+            <h2 style={{ marginBottom: "12px" }}>Förfrågan mottagen!</h2>
+            <p style={{ color: "var(--slate-navy-light)", maxWidth: "480px", margin: "0 auto" }}>
+              Vi återkommer inom 48 timmar med matchade leverantörer.
+              Håll utkik i din inkorg på <strong>{form.email}</strong>.
+            </p>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section id="intent-form" className="intent-section">
@@ -307,13 +353,19 @@ export default function IntentForm() {
             </div>
           </div>
 
+          {submitError && (
+            <p style={{ color: "#e53e3e", textAlign: "center", marginTop: "16px", fontSize: "14px" }}>
+              {submitError}
+            </p>
+          )}
           <div className="text-center mt-2" style={{ paddingTop: "24px" }}>
             <button
               type="submit"
               className="btn-primary"
-              style={{ width: "100%", fontSize: "16px", padding: "18px" }}
+              disabled={submitting}
+              style={{ width: "100%", fontSize: "16px", padding: "18px", opacity: submitting ? 0.7 : 1 }}
             >
-              Skicka förfrågan <ArrowRight size={16} />
+              {submitting ? "Skickar…" : <><ArrowRight size={16} /> Skicka förfrågan</>}
             </button>
           </div>
         </form>
