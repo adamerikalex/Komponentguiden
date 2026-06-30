@@ -1,8 +1,11 @@
+import Link from "next/link";
 import { ArrowRight, Scale, Zap, Lock } from "lucide-react";
 import ScrollyTelling from "@/components/ScrollyTelling";
 import IntentForm from "@/components/IntentForm";
+import { getAllPosts, formatDate } from "@/lib/posts";
 
 export default function HomePage() {
+  const recentPosts = getAllPosts().slice(0, 3);
   return (
     <>
       <section className="hero-section">
@@ -73,6 +76,34 @@ export default function HomePage() {
       </section>
 
       <IntentForm />
+
+      <section className="blog-preview-section">
+        <div className="container">
+          <div className="blog-preview-header">
+            <span className="metadata">Resurser</span>
+            <h2>Senaste insikter</h2>
+            <p>Guider och analyser för industriellt inköp i Sverige.</p>
+          </div>
+          <div className="blog-preview-grid">
+            {recentPosts.map((post, i) => (
+              <Link key={post.slug} href={`/blogg/${post.slug}`} className="blog-preview-card">
+                <div className={`blog-card-thumb blog-grad-${i % 5}`} />
+                <div className="blog-card-body">
+                  <span className="blog-card-tag">{post.tags[0]}</span>
+                  <div className="blog-card-title">{post.title}</div>
+                  <p className="blog-card-desc">{post.description}</p>
+                  <span className="blog-card-date">{formatDate(post.publishedAt)}</span>
+                </div>
+              </Link>
+            ))}
+          </div>
+          <div className="text-center" style={{ marginTop: "40px" }}>
+            <Link href="/blogg" className="btn-primary">
+              Se alla resurser <ArrowRight size={16} />
+            </Link>
+          </div>
+        </div>
+      </section>
     </>
   );
 }

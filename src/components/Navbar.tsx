@@ -36,6 +36,12 @@ export default function Navbar() {
           >
             Vår strategi
           </Link>
+          <Link
+            href="/blogg"
+            className={pathname.startsWith("/blogg") ? "active" : ""}
+          >
+            Blogg
+          </Link>
         </div>
       </div>
     </nav>
