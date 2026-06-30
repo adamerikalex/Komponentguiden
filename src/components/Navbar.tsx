@@ -42,6 +42,12 @@ export default function Navbar() {
           >
             Blogg
           </Link>
+          <Link
+            href="/akut"
+            className={`akut-pill${pathname === "/akut" ? " akut-pill--active" : ""}`}
+          >
+            Akut behov
+          </Link>
         </div>
       </div>
     </nav>

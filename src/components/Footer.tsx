@@ -34,8 +34,8 @@ export default function Footer() {
             <h4>Kontakt</h4>
             <ul>
               <li>
-                <a href="mailto:hej@komponentguiden.se">
-                  hej@komponentguiden.se
+                <a href="mailto:info@komponentguiden.se">
+                  info@komponentguiden.se
                 </a>
               </li>
               <li>
