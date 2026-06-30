@@ -37,15 +37,25 @@ const CERTS = [
   "ISO 13485 (MedTech)",
 ];
 
-export default function IntentForm() {
+type IntentFormProps = {
+  defaultMethod?: string;
+  defaultMaterial?: string;
+  heading?: string;
+};
+
+export default function IntentForm({
+  defaultMethod,
+  defaultMaterial,
+  heading = "Specificera er förfrågan",
+}: IntentFormProps = {}) {
   const [form, setForm] = useState<FormState>({
     orgNr: "",
     companyName: "",
     email: "",
     phone: "",
     projectName: "",
-    method: "Skärande bearbetning",
-    material: "Aluminium",
+    method: defaultMethod ?? "Skärande bearbetning",
+    material: defaultMaterial ?? "Aluminium",
     tolerance: "Standard (ISO)",
     surfaceTreatment: "",
     certs: [],
@@ -119,7 +129,7 @@ export default function IntentForm() {
     <section id="intent-form" className="intent-section">
       <div className="container">
         <div className="intent-header">
-          <h2>Specificera er förfrågan</h2>
+          <h2>{heading}</h2>
           <p>Fyll i formuläret nedan för att initiera datamatchningen.</p>
         </div>
 

@@ -1,7 +1,7 @@
 # Claude Code prompt — Category landing pages
 
 ## Task
-Implement five category landing pages as statically generated routes using a shared dynamic template. All content and copy is pre-written in `content/categories/index.ts` — do not invent or alter any copy.
+Implement 20 category landing pages as statically generated routes using a shared dynamic template. All content and copy is pre-written in `content/categories/index.ts` — do not invent or alter any copy.
 
 ---
 
@@ -12,7 +12,7 @@ Implement five category landing pages as statically generated routes using a sha
 - Root layout (`src/app/layout.tsx`) wraps all pages with Navbar, `<main>`, and Footer — do not re-add these
 - Path alias: `@/` maps to `src/`
 - Existing components to reuse: `IntentForm` at `src/components/IntentForm.tsx`
-- Existing icons in use: lucide-react v1.22.0 — the icon names in the data file (`Zap`, `Scale`, `Lock`, `Network`, `ShieldCheck`, `Award`, `Clock`, `Search`, `FileCheck`) are all valid lucide-react exports
+- Existing icons in use: lucide-react v1.22.0 — the icon names in the data file (`Zap`, `Scale`, `Lock`, `Network`, `ShieldCheck`, `Award`, `Clock`, `Search`, `FileCheck`, `MapPin`, `Layers`, `Cpu`, `Leaf`) must all be imported from lucide-react
 
 ### Design tokens (from `:root` in globals.css)
 ```
@@ -55,17 +55,41 @@ Or use a relative import path from the app directory. Do not hardcode any copy i
 
 ---
 
-## Files to create
+## Files to create or modify
 
 ### 1. `src/app/[category]/page.tsx` — Dynamic category route
 
-This is the only page file needed. It generates all five pages statically.
+This is the only page file needed. It generates all 22 pages statically.
 
 **Routing:**
-- URL pattern: `/[category]` (e.g., `/cnc-bearbetning`, `/as9100-certifierade-leverantorer`)
+- URL pattern: `/[category]` (e.g., `/cnc-bearbetning`, `/legotillverkare-goteborg`)
 - `generateStaticParams()`: return all slugs from `categoryPages` as `{ category: slug }`
 - `generateMetadata({ params })`: return `metaTitle` and `metaDescription` from the matching category data
 - If slug not found: call `notFound()`
+
+**All 20 slugs** (for generateStaticParams reference):
+```
+cnc-bearbetning
+plat-och-svets
+gjutning
+formsprutning
+3d-printing
+legotillverkning-aluminium
+legotillverkning-rostfritt
+titan-bearbetning
+legotillverkning-plast
+kompositmaterial
+legotillverkare-goteborg
+legotillverkare-stockholm
+legotillverkare-smaland
+legotillverkare-skane
+legotillverkare-blekinge
+legotillverkare-halland
+as9100-certifierade-leverantorer
+fordonsindustri
+medicinteknik
+energi
+```
 
 **Page layout (top to bottom):**
 
@@ -138,15 +162,41 @@ This is the only page file needed. It generates all five pages statically.
 
 ---
 
-### 2. Update `src/components/Navbar.tsx`
+### 2. Update `src/components/Footer.tsx`
 
-Add navigation links for the two highest-priority category pages. Look at how existing nav links are structured (active state via `usePathname`) and follow the exact same pattern.
+Add four category link sections to the footer. **Do not modify `src/components/Navbar.tsx`** — the navigation stays as Start / Concierge / Om oss only.
 
-Add these two links in the main nav (desktop), in this order after existing links:
-- "CNC-bearbetning" → `/cnc-bearbetning`
-- "Försvar & flyg" → `/as9100-certifierade-leverantorer`
+Add the following four sections to the footer (after existing footer content, or integrated with the existing column layout — match the visual style of whatever is already in Footer.tsx):
 
-Do not add all five category pages to the nav — only these two. The others are reached via SEO and internal links.
+**Section: Bearbetningsmetoder**
+- CNC-bearbetning → `/cnc-bearbetning`
+- Plåt & svets → `/plat-och-svets`
+- Gjutning → `/gjutning`
+- Formsprutning → `/formsprutning`
+- 3D-printing → `/3d-printing`
+
+**Section: Material**
+- Aluminium → `/legotillverkning-aluminium`
+- Rostfritt stål → `/legotillverkning-rostfritt`
+- Titan → `/titan-bearbetning`
+- Plast & polymerer → `/legotillverkning-plast`
+- Komposit → `/kompositmaterial`
+
+**Section: Regioner**
+- Göteborg → `/legotillverkare-goteborg`
+- Stockholm → `/legotillverkare-stockholm`
+- Småland → `/legotillverkare-smaland`
+- Skåne → `/legotillverkare-skane`
+- Blekinge → `/legotillverkare-blekinge`
+- Halland → `/legotillverkare-halland`
+
+**Section: Branscher**
+- Försvar & flyg → `/as9100-certifierade-leverantorer`
+- Fordonsindustri → `/fordonsindustri`
+- Medicinteknik → `/medicinteknik`
+- Energi → `/energi`
+
+Link styling: match existing footer link style (no underline by default, underline or color on hover, --slate-navy-light color). Each section has a bold/uppercase heading label above the links. Follow the existing footer's visual language exactly.
 
 ---
 
@@ -198,19 +248,36 @@ Follow the existing CSS patterns in `globals.css` — class-based, no Tailwind u
 ## Constraints
 
 - Server components only — no `"use client"` in the page or layout (IntentForm is already client-side)
-- Fully static: all five pages must be pre-rendered at build time via `generateStaticParams`
+- Fully static: all 20 pages must be pre-rendered at build time via `generateStaticParams`
 - Do not hardcode any copy in the component — all text comes from `content/categories/index.ts`
 - Do not create a `layout.tsx` inside `[category]/` — the root layout handles everything
 - Do not modify the homepage (`src/app/page.tsx`) — the IntentForm there passes no props and must continue to work
+- Do not modify `src/components/Navbar.tsx` — nav stays as Start / Concierge / Om oss
 - Confirm build passes: `source ~/.zprofile && npm run build`
 
 ---
 
-## Expected output URLs
+## Expected output URLs (20 total)
+
 ```
 /cnc-bearbetning
 /plat-och-svets
+/gjutning
+/formsprutning
+/3d-printing
 /legotillverkning-aluminium
 /legotillverkning-rostfritt
+/titan-bearbetning
+/legotillverkning-plast
+/kompositmaterial
+/legotillverkare-goteborg
+/legotillverkare-stockholm
+/legotillverkare-smaland
+/legotillverkare-skane
+/legotillverkare-blekinge
+/legotillverkare-halland
 /as9100-certifierade-leverantorer
+/fordonsindustri
+/medicinteknik
+/energi
 ```

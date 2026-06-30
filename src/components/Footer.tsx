@@ -47,6 +47,49 @@ export default function Footer() {
             </ul>
           </div>
         </div>
+        <div className="footer-categories">
+          <div className="footer-col">
+            <h4>Bearbetningsmetoder</h4>
+            <ul>
+              <li><Link href="/cnc-bearbetning">CNC-bearbetning</Link></li>
+              <li><Link href="/plat-och-svets">Plåt &amp; svets</Link></li>
+              <li><Link href="/gjutning">Gjutning</Link></li>
+              <li><Link href="/formsprutning">Formsprutning</Link></li>
+              <li><Link href="/3d-printing">3D-printing</Link></li>
+            </ul>
+          </div>
+          <div className="footer-col">
+            <h4>Material</h4>
+            <ul>
+              <li><Link href="/legotillverkning-aluminium">Aluminium</Link></li>
+              <li><Link href="/legotillverkning-rostfritt">Rostfritt stål</Link></li>
+              <li><Link href="/titan-bearbetning">Titan</Link></li>
+              <li><Link href="/legotillverkning-plast">Plast &amp; polymerer</Link></li>
+              <li><Link href="/kompositmaterial">Komposit</Link></li>
+            </ul>
+          </div>
+          <div className="footer-col">
+            <h4>Regioner</h4>
+            <ul>
+              <li><Link href="/legotillverkare-goteborg">Göteborg</Link></li>
+              <li><Link href="/legotillverkare-stockholm">Stockholm</Link></li>
+              <li><Link href="/legotillverkare-smaland">Småland</Link></li>
+              <li><Link href="/legotillverkare-skane">Skåne</Link></li>
+              <li><Link href="/legotillverkare-blekinge">Blekinge</Link></li>
+              <li><Link href="/legotillverkare-halland">Halland</Link></li>
+            </ul>
+          </div>
+          <div className="footer-col">
+            <h4>Branscher</h4>
+            <ul>
+              <li><Link href="/as9100-certifierade-leverantorer">Försvar &amp; flyg</Link></li>
+              <li><Link href="/fordonsindustri">Fordonsindustri</Link></li>
+              <li><Link href="/medicinteknik">Medicinteknik</Link></li>
+              <li><Link href="/energi">Energi</Link></li>
+            </ul>
+          </div>
+        </div>
+
         <div className="footer-bottom">
           <span>© 2026 Komponentguiden AB. Alla rättigheter reserverade.</span>
           <span style={{ display: "flex", gap: "16px" }}>
