@@ -41,17 +41,16 @@ export default function MetricsSection() {
   const [values, setValues] = useState(
     METRICS.map((m) => (m.final === 0 ? 0 : m.scrambleMin))
   );
-  const [animated, setAnimated] = useState(false);
   const ref = useRef<HTMLElement>(null);
-  const intervalsRef = useRef<ReturnType<typeof setInterval>[]>([]);
+  const hasAnimated = useRef(false);
+  const intervals = useRef<ReturnType<typeof setInterval>[]>([]);
 
   useEffect(() => {
-    if (animated) return;
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (!entry.isIntersecting) return;
+        if (!entry.isIntersecting || hasAnimated.current) return;
+        hasAnimated.current = true;
         observer.disconnect();
-        setAnimated(true);
 
         METRICS.forEach((metric, i) => {
           if (metric.final === 0) return;
@@ -79,7 +78,7 @@ export default function MetricsSection() {
             }
           }, INTERVAL_MS);
 
-          intervalsRef.current.push(interval);
+          intervals.current.push(interval);
         });
       },
       { threshold: 0.3 }
@@ -88,9 +87,9 @@ export default function MetricsSection() {
     if (ref.current) observer.observe(ref.current);
     return () => {
       observer.disconnect();
-      intervalsRef.current.forEach(clearInterval);
+      intervals.current.forEach(clearInterval);
     };
-  }, [animated]);
+  }, []);
 
   return (
     <section className="metrics-section" ref={ref}>

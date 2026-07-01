@@ -40,6 +40,8 @@ export default function HomePage() {
 
       <ScrollyTelling />
 
+      <MetricsSection />
+
       <section className="security-section">
         <div className="container">
           <div className="blog-preview-header">
@@ -76,8 +78,6 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-
-      <MetricsSection />
 
       <IntentForm />
 

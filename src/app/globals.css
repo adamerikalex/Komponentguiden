@@ -219,11 +219,11 @@ footer { background: var(--surface); border-top: 1px solid var(--border); paddin
 .page-header { padding: 80px 0 40px; text-align: center; max-width: 700px; margin: 0 auto; }
 
 /* Metrics section */
-.metrics-section { background: var(--slate-navy); padding: 80px 0; }
+.metrics-section { background: var(--surface); padding: 80px 0; border-bottom: 1px solid var(--border); }
 .metrics-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 48px; text-align: center; }
 .metric-item { display: flex; flex-direction: column; align-items: center; gap: 12px; }
-.metric-number { font-family: var(--font-meta); font-size: clamp(40px, 6vw, 64px); font-weight: 700; color: #ffffff; line-height: 1; letter-spacing: -0.02em; min-width: 5ch; display: inline-block; text-align: center; font-feature-settings: "zero" 1; }
-.metric-label { font-family: var(--font-meta); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--turquoise); max-width: 180px; line-height: 1.5; text-align: center; }
+.metric-number { font-family: var(--font-meta); font-size: clamp(40px, 6vw, 64px); font-weight: 700; color: var(--slate-navy); line-height: 1; letter-spacing: -0.02em; min-width: 5ch; display: inline-block; text-align: center; font-feature-settings: "zero" 1; }
+.metric-label { font-family: var(--font-main); font-size: 14px; font-weight: 700; color: var(--slate-navy-light); max-width: 200px; line-height: 1.5; text-align: center; }
 
 /* Blog gradients */
 .blog-grad-0 { background: linear-gradient(135deg, #635bff 0%, #818cf8 100%); }
