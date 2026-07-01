@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, Scale, Zap, Lock } from "lucide-react";
 import ScrollyTelling from "@/components/ScrollyTelling";
+import MetricsSection from "@/components/MetricsSection";
 import IntentForm from "@/components/IntentForm";
 import { getAllPosts, formatDate } from "@/lib/posts";
 
@@ -75,6 +76,8 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      <MetricsSection />
 
       <IntentForm />
 

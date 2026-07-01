@@ -1,0 +1,109 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+
+type Metric = {
+  final: number;
+  label: string;
+  scrambleMin: number;
+  scrambleMax: number;
+  format: (n: number) => string;
+};
+
+const METRICS: Metric[] = [
+  {
+    final: 8860,
+    label: "Företag i Sverige (SNI 22, 23, 25)",
+    scrambleMin: 1000,
+    scrambleMax: 9999,
+    format: (n) => new Intl.NumberFormat("sv-SE").format(n),
+  },
+  {
+    final: 171,
+    label: "Antal företag i vår databas",
+    scrambleMin: 10,
+    scrambleMax: 999,
+    format: (n) => String(n),
+  },
+  {
+    final: 0,
+    label: "Antal presenterade matchningar",
+    scrambleMin: 0,
+    scrambleMax: 0,
+    format: (n) => String(n),
+  },
+];
+
+const FRAMES = 40;
+const INTERVAL_MS = 40;
+
+export default function MetricsSection() {
+  const [values, setValues] = useState(
+    METRICS.map((m) => (m.final === 0 ? 0 : m.scrambleMin))
+  );
+  const [animated, setAnimated] = useState(false);
+  const ref = useRef<HTMLElement>(null);
+  const intervalsRef = useRef<ReturnType<typeof setInterval>[]>([]);
+
+  useEffect(() => {
+    if (animated) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        observer.disconnect();
+        setAnimated(true);
+
+        METRICS.forEach((metric, i) => {
+          if (metric.final === 0) return;
+
+          let frame = 0;
+          const interval = setInterval(() => {
+            frame++;
+            if (frame >= FRAMES) {
+              clearInterval(interval);
+              setValues((prev) => {
+                const next = [...prev];
+                next[i] = metric.final;
+                return next;
+              });
+            } else {
+              const rand =
+                Math.floor(
+                  Math.random() * (metric.scrambleMax - metric.scrambleMin + 1)
+                ) + metric.scrambleMin;
+              setValues((prev) => {
+                const next = [...prev];
+                next[i] = rand;
+                return next;
+              });
+            }
+          }, INTERVAL_MS);
+
+          intervalsRef.current.push(interval);
+        });
+      },
+      { threshold: 0.3 }
+    );
+
+    if (ref.current) observer.observe(ref.current);
+    return () => {
+      observer.disconnect();
+      intervalsRef.current.forEach(clearInterval);
+    };
+  }, [animated]);
+
+  return (
+    <section className="metrics-section" ref={ref}>
+      <div className="container">
+        <div className="metrics-grid">
+          {METRICS.map((metric, i) => (
+            <div key={i} className="metric-item">
+              <span className="metric-number">{metric.format(values[i])}</span>
+              <span className="metric-label">{metric.label}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
