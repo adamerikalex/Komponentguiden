@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Check } from "lucide-react";
 
 export default function ScrollyTelling() {
-  const [stage, setStage] = useState(1);
+  const [stage, setStage] = useState<1 | 2 | 3 | 4>(1);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -15,8 +15,9 @@ export default function ScrollyTelling() {
         (window.scrollY - section.offsetTop) /
         (section.offsetHeight - window.innerHeight);
       if (progress >= 0 && progress <= 1) {
-        if (progress >= 0.66) setStage(3);
-        else if (progress > 0.33) setStage(2);
+        if (progress >= 0.75) setStage(4);
+        else if (progress >= 0.50) setStage(3);
+        else if (progress >= 0.25) setStage(2);
         else setStage(1);
       }
     };
@@ -85,6 +86,24 @@ export default function ScrollyTelling() {
                 <li>
                   <Check size={16} className="icon" />
                   Ni behåller kundrelationen
+                </li>
+              </ul>
+            </div>
+            <div className={`content-layer ${stage === 4 ? "active" : ""}`}>
+              <span className="metadata">Steg 04</span>
+              <h2>Ni väljer hur ni går vidare</h2>
+              <ul className="feature-list">
+                <li>
+                  <Check size={16} className="icon" />
+                  Ni får kontaktuppgifter och kapabilitetsprofil för varje matchad leverantör
+                </li>
+                <li>
+                  <Check size={16} className="icon" />
+                  Ni kontaktar och utvärderar dem självständigt — på era egna villkor
+                </li>
+                <li>
+                  <Check size={16} className="icon" />
+                  Vill ni ha mer stöd? Concierge-tjänsten tar helhetsansvaret från offert till leverans
                 </li>
               </ul>
             </div>

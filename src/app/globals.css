@@ -101,7 +101,7 @@ nav.main-nav {
 .hero-img { max-width: 320px; object-fit: contain; transform: scale(1.19) translateX(12%); transform-origin: center right; mix-blend-mode: multiply; }
 
 /* Scrollytelling */
-.scrolly-wrapper { position: relative; background: var(--surface); height: 300vh; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.scrolly-wrapper { position: relative; background: var(--surface); height: 400vh; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
 .scrolly-container { position: sticky; top: 20vh; height: 60vh; display: flex; align-items: center; overflow: hidden; }
 .scrolly-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; width: 100%; align-items: center; }
 .scrolly-visual { height: 400px; position: relative; }
