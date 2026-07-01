@@ -41,7 +41,8 @@ export default function HomePage() {
 
       <section className="security-section">
         <div className="container">
-          <div className="text-center" style={{ marginBottom: "50px" }}>
+          <div className="blog-preview-header">
+            <span className="metadata">Plattformen</span>
             <h2>Vårt löfte till er</h2>
           </div>
           <div className="security-grid">
