@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import {
   Network, Scale, ShieldCheck, Award,
-  FileText, Search, FileCheck, Settings, PackageCheck,
+  FileText, Search, FileCheck, Settings, PackageCheck, Receipt,
 } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -82,8 +82,8 @@ export default function ConciergePage() {
               <div className="process-step-body">
                 <h3>Specifikation</h3>
                 <p>
-                  Ni skickar ritning, material, toleranskrav och volym. Inget möte
-                  krävs — ett mail räcker för att komma igång.
+                  Ni skickar ritning, material, toleranskrav och volym — ett mail
+                  räcker för att komma igång.
                 </p>
               </div>
             </div>
@@ -92,9 +92,8 @@ export default function ConciergePage() {
               <div className="process-step-body">
                 <h3>Sourcing &amp; kvalificering</h3>
                 <p>
-                  Vi identifierar rätt leverantör ur vårt validerade nätverk.
-                  Maskinpark, certifieringsstatus och aktuell kapacitet
-                  kontrolleras. Ni ser aldrig en okvalificerad leverantör.
+                  Vi identifierar rätt leverantör ur vårt validerade nätverk. Ni
+                  ser aldrig en okvalificerad leverantör.
                 </p>
               </div>
             </div>
@@ -104,8 +103,7 @@ export default function ConciergePage() {
                 <h3>Offert</h3>
                 <p>
                   Ni får en offert som visar leverantörens pris och vårt påslag
-                  separat. Inga dolda kostnader — ni ser exakt vad ni betalar och
-                  varför, innan ni godkänner.
+                  separat.
                 </p>
               </div>
             </div>
@@ -115,8 +113,7 @@ export default function ConciergePage() {
                 <h3>Produktion &amp;<br />uppföljning</h3>
                 <p>
                   Vi lägger ordern, kommunicerar med leverantören och hanterar
-                  eventuella avvikelser. Ni behöver inte involveras operativt —
-                  men ni kan alltid be om status.
+                  eventuella avvikelser.
                 </p>
               </div>
             </div>
@@ -126,8 +123,16 @@ export default function ConciergePage() {
                 <h3>Leverans</h3>
                 <p>
                   Komponenter levereras enligt spec. Vi bär kvalitetsansvaret och
-                  hanterar avvikelser om något inte stämmer. Ni betalar en faktura
-                  — från oss, inte från verkstaden.
+                  hanterar avvikelser om något inte stämmer.
+                </p>
+              </div>
+            </div>
+            <div className="process-step">
+              <div className="process-step-number"><Receipt size={20} /></div>
+              <div className="process-step-body">
+                <h3>Betalning</h3>
+                <p>
+                  Ni betalar en faktura — från oss, inte från verkstaden.
                 </p>
               </div>
             </div>

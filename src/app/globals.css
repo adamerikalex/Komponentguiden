@@ -190,7 +190,7 @@ footer { background: var(--surface); border-top: 1px solid var(--border); paddin
 .qualifier-card p { font-size: 14px; color: var(--slate-navy-light); line-height: 1.6; }
 
 .concierge-process { background: var(--canvas); padding: 80px 0; }
-.process-flow { display: grid; grid-template-columns: repeat(5, 1fr); gap: 24px; position: relative; }
+.process-flow { display: grid; grid-template-columns: repeat(6, 1fr); gap: 24px; position: relative; }
 .process-flow::before { content: ""; position: absolute; top: 24px; left: 10%; right: 10%; height: 2px; border-top: 2px dashed var(--border); z-index: 0; }
 .process-step { display: flex; flex-direction: column; align-items: center; text-align: center; position: relative; z-index: 1; }
 .process-step-number { width: 48px; height: 48px; background: var(--indigo); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
