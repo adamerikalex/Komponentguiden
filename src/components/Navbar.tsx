@@ -29,7 +29,6 @@ export default function Navbar() {
           <Link href="/" className={pathname === "/" ? "active" : ""} onClick={close}>Start</Link>
           <Link href="/concierge" className={pathname === "/concierge" ? "active" : ""} onClick={close}>Concierge</Link>
           <Link href="/about" className={pathname === "/about" ? "active" : ""} onClick={close}>Om oss</Link>
-          <Link href="/strategy" className={pathname === "/strategy" ? "active" : ""} onClick={close}>Vår strategi</Link>
           <Link href="/blogg" className={pathname.startsWith("/blogg") ? "active" : ""} onClick={close}>Blogg</Link>
           <Link href="/akut" className={`akut-pill${pathname === "/akut" ? " akut-pill--active" : ""}`} onClick={close}>Akut behov</Link>
         </div>

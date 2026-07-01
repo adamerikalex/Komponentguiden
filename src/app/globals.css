@@ -217,8 +217,6 @@ footer { background: var(--surface); border-top: 1px solid var(--border); paddin
 .concierge-bottom-cta p { font-size: 17px; color: rgba(255,255,255,0.8); line-height: 1.7; max-width: 500px; margin: 0 auto 36px; }
 
 .page-header { padding: 80px 0 40px; text-align: center; max-width: 700px; margin: 0 auto; }
-.strategy-timeline { max-width: 800px; margin: 0 auto 100px; }
-.strategy-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 40px; margin-bottom: 24px; }
 
 /* Blog gradients */
 .blog-grad-0 { background: linear-gradient(135deg, #635bff 0%, #818cf8 100%); }
