@@ -28,7 +28,7 @@ export default function AkutPage() {
               mobiliserar rätt verkstad för er situation.
             </p>
             <div className="akut-cta-block">
-              <
+              <a
                 href="mailto:info@komponentguiden.se?subject=Akut%20leverant%C3%B6rsbehov"
                 className="btn-urgent"
               >

@@ -39,10 +39,10 @@ export default function Footer() {
                 </a>
               </li>
               <li>
-                <a href="#">Support</a>
+                <Link href="/support">Support</Link>
               </li>
               <li>
-                <a href="#">Sekretesspolicy</a>
+                <Link href="/sekretesspolicy">Sekretesspolicy</Link>
               </li>
             </ul>
           </div>
