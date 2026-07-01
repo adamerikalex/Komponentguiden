@@ -93,9 +93,20 @@ export default function IntentForm({
     setSubmitting(true);
     setSubmitError(null);
 
+    if (!form.email) {
+      setSubmitError("E-postadress krävs.");
+      setSubmitting(false);
+      return;
+    }
+
     // Upload drawing if provided — failure is non-blocking
     let drawingUrl: string | null = null;
     if (file) {
+      if (file.size > 50 * 1024 * 1024) {
+        setSubmitError("Filen är för stor — max 50 MB.");
+        setSubmitting(false);
+        return;
+      }
       const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
       const { data: uploadData } = await supabase.storage
         .from("drawings")

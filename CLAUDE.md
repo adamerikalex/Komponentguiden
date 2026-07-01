@@ -50,17 +50,18 @@ public/
 --font-meta: var(--font-roboto-mono)
 ```
 
-## Current status (as of June 2026)
+## Current status (as of July 2026)
 - [x] HTML prototype → Next.js migration complete
-- [x] All 4 routes live and navigable
-- [x] IntentForm stateful, ready for Supabase connection
-- [ ] Supabase project setup + `intent_requests` table
-- [ ] Form submission → Supabase insert
-- [ ] File upload → Supabase Storage (with RLS)
-- [ ] Resend email on submission
-- [ ] Survey expansion (more methods, multi-select materials)
-- [ ] Matching engine (SQL/Edge Function)
-- [ ] Analytics dashboard
+- [x] All routes live: `/`, `/concierge`, `/about`, `/strategy`, `/akut`, `/blogg`, 20× `/[category]`
+- [x] IntentForm fully wired to Supabase with file upload (non-blocking)
+- [x] Supabase `intent_requests` table + RLS (anon INSERT only)
+- [x] Supabase Storage `drawings` bucket (private, anon INSERT RLS)
+- [x] Hamburger menu for mobile nav
+- [ ] Resend email — internal notification + buyer confirmation on submission
+- [ ] SEO metadata — per-page titles, descriptions, Open Graph tags
+- [ ] Blog thumbnails — replace gradient cards with real images
+- [ ] Matching engine (SQL/Edge Function querying `suppliers` table)
+- [ ] Analytics dashboard (funnel: visits → submissions → matches)
 
 ## Local dev
 ```bash

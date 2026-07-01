@@ -28,8 +28,7 @@ export default function AkutPage() {
               mobiliserar rätt verkstad för er situation.
             </p>
             <div className="akut-cta-block">
-              {/* TODO: replace email when your address is ready */}
-              <a
+              <
                 href="mailto:info@komponentguiden.se?subject=Akut%20leverant%C3%B6rsbehov"
                 className="btn-urgent"
               >
@@ -169,7 +168,6 @@ export default function AkutPage() {
               tidskrav och övrig relevant info. Vi svarar inom två timmar på
               vardagar och mobiliserar rätt leverantör för er.
             </p>
-            {/* TODO: replace email when your address is ready */}
             <a
               href="mailto:info@komponentguiden.se?subject=Akut%20leverant%C3%B6rsbehov"
               className="btn-urgent-inverse"
