@@ -223,7 +223,7 @@ footer { background: var(--surface); border-top: 1px solid var(--border); paddin
 .metrics-section { background: var(--surface); padding: 80px 0; border-bottom: 1px solid var(--border); }
 .metrics-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 48px; text-align: center; }
 .metric-item { display: flex; flex-direction: column; align-items: center; gap: 12px; }
-.metric-number { font-family: var(--font-meta); font-size: clamp(40px, 6vw, 64px); font-weight: 700; background: linear-gradient(135deg, var(--indigo) 0%, var(--turquoise) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1; letter-spacing: -0.02em; min-width: 5ch; display: inline-block; text-align: center; font-feature-settings: "zero" 1; }
+.metric-number { font-family: var(--font-meta); font-size: clamp(48px, 7vw, 80px); font-weight: 800; background: linear-gradient(135deg, var(--indigo) 0%, var(--turquoise) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1; letter-spacing: -0.02em; min-width: 5ch; display: inline-block; text-align: center; font-feature-settings: "zero" 1; }
 .metric-label { font-family: var(--font-main); font-size: 14px; font-weight: 700; color: var(--slate-navy-light); max-width: 200px; line-height: 1.5; text-align: center; }
 
 /* Blog gradients */

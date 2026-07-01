@@ -13,14 +13,14 @@ type Metric = {
 const METRICS: Metric[] = [
   {
     final: 8860,
-    label: "Företag i Sverige (SNI 22, 23, 25)",
+    label: "Svenska företag inom bearbetning av metall, plåt och komposit",
     scrambleMin: 1000,
     scrambleMax: 9999,
     format: (n) => new Intl.NumberFormat("sv-SE").format(n),
   },
   {
     final: 171,
-    label: "Antal företag i vår databas",
+    label: "Kartlagda företag i vår databas",
     scrambleMin: 10,
     scrambleMax: 999,
     format: (n) => String(n),
