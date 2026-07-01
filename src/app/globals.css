@@ -195,7 +195,7 @@ footer { background: var(--surface); border-top: 1px solid var(--border); paddin
 .process-step { display: flex; flex-direction: column; align-items: center; text-align: center; position: relative; z-index: 1; }
 .process-step-number { width: 48px; height: 48px; background: var(--indigo); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .process-step-body { min-width: 0; }
-.process-step h3 { font-size: 15px; font-weight: 700; color: var(--slate-navy); margin: 10px 0 6px; }
+.process-step h3 { font-size: 15px; font-weight: 700; color: var(--slate-navy); margin: 10px 0 6px; line-height: 1.2; min-height: 2.4em; }
 .process-step p { font-size: 13px; color: var(--slate-navy-light); line-height: 1.6; max-width: 180px; }
 
 .concierge-pricing { background: var(--surface); padding: 80px 0; }
