@@ -17,9 +17,8 @@ export default function HomePage() {
             </h1>
             <p>
               Vi matchar ert behov mot vårt nätverk av industriell
-              legotillverkning över hela Sverige. Vår databas täcker alla
-              företag inom industriell kontraktstillverkning, oavsett maskinpark,
-              ISO-certifieringar eller storlek på produktion. Allt du behöver
+              legotillverkning över hela Sverige. Vi har kartlagt tusentals svenska legotillverkare inom metall, plast och komposit, oavsett maskinpark,
+              ISO-certifieringar eller storlek på produktion. Allt ni behöver
               göra är att definiera krav, ladda upp ritning och få 5 validerade
               matchningar inom 48 timmar.
             </p>

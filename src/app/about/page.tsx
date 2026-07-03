@@ -111,7 +111,7 @@ export default function AboutPage() {
         <div className="container om-oss-grid text-left">
           <div className="om-oss-text">
             <span className="metadata">Incitament</span>
-            <h2 style={{ fontSize: "32px", marginBottom: "20px" }}>Win win</h2>
+            <h2 style={{ fontSize: "32px", marginBottom: "20px" }}>Rätt affär för alla parter</h2>
             <div
               style={{
                 fontSize: "15px",
@@ -121,10 +121,12 @@ export default function AboutPage() {
             >
               <p>
                 Utöver att koppla samman köpare och säljare finns även en
-                ekonomisk vinning, som gynnar alla. Genom att dra nytta av ett
-                stort fragmenterat supply kan underutnyttjad kapacitet i
-                produktion skapa affärer till attraktiva priser. Nyckeln är
-                teknik, data och en marknadsplats som skapar förutsättningar.
+                ekonomisk vinning som gynnar alla. Genom att dra nytta av ett
+                stort fragmenterat leverantörslandskap kan kapacitet som annars
+                skulle stå outnyttjad skapa affärer till attraktiva priser.
+                Underutnyttjad kapacitet hos svenska verkstäder möter reell
+                efterfrågan från industrin — det driver konkurrenskraftiga priser
+                för köparen och nya affärer för leverantören.
               </p>
             </div>
           </div>
