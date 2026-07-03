@@ -166,7 +166,7 @@ export default function ConciergePage() {
       {/* Feature cards */}
       <section className="concierge-features-section">
         <div className="container">
-          <h2 className="cat-section-heading">Vad ingår</h2>
+          <h2 className="cat-section-heading">Det här ingår</h2>
           <div className="concierge-features-grid">
             <div className="concierge-feature-card">
               <Network size={24} className="concierge-feature-icon" />
@@ -179,10 +179,13 @@ export default function ConciergePage() {
             </div>
             <div className="concierge-feature-card">
               <Scale size={24} className="concierge-feature-icon" />
-              <h3>Transparent påslag</h3>
+              <h3>Konkurrenskraftig prissättning</h3>
               <p>
-                Ni betalar alltid leverantörens faktiska pris plus 10 %. Ni ser
-                fördelningen i varje offert. Inga överraskningar på fakturan.
+                Vårt påslag på 10 % ersätter kostnaden för intern hantering —
+                administration, riskexponering och leverantörsupplägg. Vi
+                matchar dessutom mot verkstäder med outnyttjad kapacitet, vilket
+                driver attraktiva grundpriser. Resultatet är ett
+                konkurrenskraftigt totalpris även med påslaget inräknat.
               </p>
             </div>
             <div className="concierge-feature-card">
