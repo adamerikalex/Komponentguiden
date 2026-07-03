@@ -181,11 +181,8 @@ export default function ConciergePage() {
               <Scale size={24} className="concierge-feature-icon" />
               <h3>Konkurrenskraftig prissättning</h3>
               <p>
-                Vårt påslag på 10 % ersätter kostnaden för intern hantering —
-                administration, riskexponering och leverantörsupplägg. Vi
-                matchar dessutom mot verkstäder med outnyttjad kapacitet, vilket
-                driver attraktiva grundpriser. Resultatet är ett
-                konkurrenskraftigt totalpris även med påslaget inräknat.
+                Vi matchar era behov mot verkstäder med outnyttjad kapacitet,
+                vilket driver attraktiva grundpriser.
               </p>
             </div>
             <div className="concierge-feature-card">
