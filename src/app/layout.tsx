@@ -18,7 +18,7 @@ const robotoMono = Roboto_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Komponentguiden – Sourcing av mekanik utan friktion",
+  title: "Komponentguiden – Inköp av industriell tillverkningsförmåga, helt utan friktion",
   description:
     "Vi matchar ert behov mot vårt nätverk av industriell legotillverkning över hela Sverige. Få 5 validerade matchningar inom 48 timmar.",
 };
