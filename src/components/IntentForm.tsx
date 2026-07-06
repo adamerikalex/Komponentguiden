@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Upload } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 
@@ -91,6 +91,12 @@ export default function IntentForm({
   const [submitError, setSubmitError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  useEffect(() => {
+    if (submitted) {
+      document.getElementById("intent-form")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [submitted]);
+
   const set = (key: keyof FormState, value: FormState[typeof key]) =>
     setForm((prev) => ({ ...prev, [key]: value }));
 
@@ -161,7 +167,7 @@ export default function IntentForm({
       <section id="intent-form" className="intent-section">
         <div className="container">
           <div className="form-card text-center" style={{ padding: "64px 32px" }}>
-            <div style={{ fontSize: "48px", marginBottom: "16px" }}>✓</div>
+            <div style={{ fontSize: "48px", marginBottom: "16px" }}>✅</div>
             <h2 style={{ marginBottom: "12px" }}>Förfrågan mottagen!</h2>
             <p style={{ color: "var(--slate-navy-light)", maxWidth: "480px", margin: "0 auto" }}>
               Vi återkommer inom 48 timmar med matchade leverantörer.
