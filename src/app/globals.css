@@ -439,7 +439,8 @@ footer { background: var(--surface); border-top: 1px solid var(--border); paddin
 
     .concierge-hero { padding: 60px 0; }
     .process-flow { grid-template-columns: 1fr; gap: 0; }
-    .process-flow::before { top: 0; bottom: 0; left: 23px; right: auto; width: 2px; height: auto; border-top: none; border-left: 2px dashed var(--border); }
+    .process-flow::before { display: none; }
+    .process-step:not(:last-child)::after { content: ""; position: absolute; left: 23px; top: 64px; bottom: -16px; border-left: 2px dashed var(--border); z-index: 0; }
     .process-step { flex-direction: row; align-items: flex-start; text-align: left; gap: 20px; padding: 16px 0; }
     .process-step-body { flex: 1; }
     .process-step p { max-width: 100%; }
@@ -450,5 +451,5 @@ footer { background: var(--surface); border-top: 1px solid var(--border); paddin
 }
 
 @media (max-width: 480px) {
-    .footer-categories { grid-template-columns: 1fr; }
+    .footer-categories { grid-template-columns: repeat(2, 1fr); }
 }

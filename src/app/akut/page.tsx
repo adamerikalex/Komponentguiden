@@ -4,7 +4,7 @@ import { AlertTriangle, XCircle, Clock, Network, Zap, Layers } from "lucide-reac
 export const metadata: Metadata = {
   title: "Akut behov av legotillverkare? Vi hjälper er idag — Komponentguiden",
   description:
-    "Leverantören har strulit, produktionen står still eller lanseringen är hotad. Vi svarar inom två timmar och mobiliserar rätt verkstad för er situation.",
+    "Er ordinarie leverantör kan inte leverera i tid, produktionen står still och lanseringen är hotad. Vi svarar inom två timmar och mobiliserar rätt verkstad för er situation.",
 };
 
 export default function AkutPage() {
@@ -23,9 +23,9 @@ export default function AkutPage() {
               Ni behöver hjälp. Nu.
             </h1>
             <p className="akut-intro">
-              Produktionen står still, lanseringen är hotad eller er ordinarie
-              leverantör kan inte leverera i tid. Vi svarar inom två timmar och
-              mobiliserar rätt verkstad för er situation.
+              Er ordinarie leverantör kan inte leverera i tid, produktionen
+              står still och lanseringen är hotad. Vi svarar inom två timmar
+              och mobiliserar rätt verkstad för er situation.
             </p>
             <div className="akut-cta-block">
               <a

@@ -75,7 +75,19 @@ Supplier data lives in **Masterbase** — the co-founder's separate platform at 
 4. Top 5 scored results → `matches` table (new, not yet created): `intent_request_id`, `supplier_id`, `score`, `rank`, `status`
 5. Alexander gets Resend notification → reviews in `/admin` dashboard → approves → buyer email sent
 
-**Masterbase `maskinpark` categories:** Laser & stans | Kantpress | Svets | Skärande bearbetning | Robot & automation | Ytbehandling | Mät & kvalitet
+**Shared capability taxonomy (2026-07, replaces raw maskinpark categories):**
+Matching is based on taxonomy slugs defined in the Masterbase repo —
+`docs/taxonomi.md` (8 groups, ~70 process slugs, materials, cert types).
+IntentForm options map to the SAME slugs: `intent_requests` gets
+`capability_slugs text[]`, `material_slugs text[]`, `cert_slugs text[]`
+(mapped from form selections at insert). Supplier side exposes
+`company_capabilities`/`company_certifications` via a scoped read-only view
+`metalbase_public` — never the service key. Legacy `maskinpark` jsonb
+(categories: Laser & stans | Kantpress | Svets | Skärande bearbetning |
+Robot & automation | Ytbehandling | Mät & kvalitet) is the raw evidence layer,
+being normalized into the taxonomy. Matching = SQL join on slugs ∩ region ∩
+size, embedding as tiebreaker. See also Masterbase `docs/metalbase-strategi.md`
+for the demand-data flywheel (intents + outcomes written back on org_nr).
 
 **Blocker:** Need Masterbase anon key to query their REST API. Co-founder must share it or grant Supabase project access.
 

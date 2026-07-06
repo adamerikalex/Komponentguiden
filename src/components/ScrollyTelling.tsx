@@ -91,7 +91,7 @@ export default function ScrollyTelling() {
             </div>
             <div className={`content-layer ${stage === 4 ? "active" : ""}`}>
               <span className="metadata">Steg 04</span>
-              <h2>Ni väljer hur ni går vidare</h2>
+              <h2>Ni kontrollerar utfallet</h2>
               <ul className="feature-list">
                 <li>
                   <Check size={16} className="icon" />
@@ -99,7 +99,7 @@ export default function ScrollyTelling() {
                 </li>
                 <li>
                   <Check size={16} className="icon" />
-                  Ni kontaktar och utvärderar dem självständigt — på era egna villkor
+                  Ni kontaktar och utvärderar förslagen självständigt - på era egna villkor
                 </li>
                 <li>
                   <Check size={16} className="icon" />
