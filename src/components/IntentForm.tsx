@@ -4,9 +4,20 @@ import { useState, useRef } from "react";
 import { Upload } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 
+const ROLES = [
+  "Inköpare",
+  "Inköpschef",
+  "Konstruktör / Produktutvecklare",
+  "Produktionstekniker",
+  "Projektledare",
+  "VD / Ägare",
+];
+
 type FormState = {
   orgNr: string;
   companyName: string;
+  contactName: string;
+  yrkesroll: string;
   email: string;
   phone: string;
   projectName: string;
@@ -59,6 +70,8 @@ export default function IntentForm({
   const [form, setForm] = useState<FormState>({
     orgNr: "",
     companyName: "",
+    contactName: "",
+    yrkesroll: "",
     email: "",
     phone: "",
     projectName: "",
@@ -71,6 +84,7 @@ export default function IntentForm({
     timeframe: "Inom 2–4 veckor",
     ndaAccepted: true,
   });
+  const [yrkesrollAnnat, setYrkesrollAnnat] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -117,6 +131,8 @@ export default function IntentForm({
     const { error } = await supabase.from("intent_requests").insert({
       org_nr: form.orgNr || null,
       company_name: form.companyName || null,
+      contact_name: form.contactName || null,
+      yrkesroll: form.yrkesroll || null,
       contact_email: form.email,
       contact_phone: form.phone || null,
       project_name: form.projectName || null,
@@ -370,6 +386,53 @@ export default function IntentForm({
                 />
               </div>
             </div>
+
+            <div className="input-row" style={{ marginBottom: "16px" }}>
+              <div>
+                <label className="input-label">Namn</label>
+                <input
+                  type="text"
+                  className="input-field"
+                  placeholder="För- och efternamn"
+                  value={form.contactName}
+                  onChange={(e) => set("contactName", e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="input-label">Yrkesroll</label>
+                <select
+                  className="input-field"
+                  value={yrkesrollAnnat ? "Annat" : form.yrkesroll}
+                  onChange={(e) => {
+                    if (e.target.value === "Annat") {
+                      setYrkesrollAnnat(true);
+                      set("yrkesroll", "");
+                    } else {
+                      setYrkesrollAnnat(false);
+                      set("yrkesroll", e.target.value);
+                    }
+                  }}
+                >
+                  <option value="">Välj roll...</option>
+                  {ROLES.map((r) => (
+                    <option key={r} value={r}>{r}</option>
+                  ))}
+                  <option value="Annat">Annat</option>
+                </select>
+                {yrkesrollAnnat && (
+                  <input
+                    type="text"
+                    className="input-field"
+                    placeholder="Ange din yrkesroll"
+                    value={form.yrkesroll}
+                    onChange={(e) => set("yrkesroll", e.target.value)}
+                    style={{ marginTop: "8px" }}
+                    autoFocus
+                  />
+                )}
+              </div>
+            </div>
+
             <div className="input-row">
               <div>
                 <label className="input-label">Företagsmail</label>
