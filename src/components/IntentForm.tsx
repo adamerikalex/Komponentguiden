@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Upload } from "lucide-react";
 import { supabase } from "@/lib/supabase";
+import { methodToSlugs, materialToSlugs, certsToSlugs } from "@/lib/taxonomy";
 
 const ROLES = [
   "Inköpare",
@@ -151,6 +152,11 @@ export default function IntentForm({
       timeframe: form.timeframe || null,
       nda_accepted: form.ndaAccepted,
       drawing_url: drawingUrl,
+      // Taxonomy slugs (Metalbase docs/taxonomi.md) — the matching engine
+      // joins on these; the label fields above are for human readability.
+      capability_slugs: methodToSlugs(form.method, form.surfaceTreatment),
+      material_slugs: materialToSlugs(form.material),
+      cert_slugs: certsToSlugs(form.certs),
     });
 
     setSubmitting(false);
