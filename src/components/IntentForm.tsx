@@ -3,7 +3,17 @@
 import { useState, useRef, useEffect } from "react";
 import { Upload } from "lucide-react";
 import { supabase } from "@/lib/supabase";
-import { methodToSlugs, materialToSlugs, certsToSlugs } from "@/lib/taxonomy";
+import {
+  ALL_METHODS,
+  UNSURE_METHOD,
+  MATERIAL_TO_PRIMARY_METHODS,
+  METHOD_TO_PROCESSES,
+  SURFACE_OPTIONS,
+  LAN_GROUPS,
+  buildCapabilitySlugs,
+  materialToSlugs,
+  certsToSlugs,
+} from "@/lib/taxonomy";
 
 const ROLES = [
   "Inköpare",
@@ -24,21 +34,16 @@ type FormState = {
   projectName: string;
   method: string;
   material: string;
+  processSlugs: string[];
   tolerance: string;
-  surfaceTreatment: string;
+  surfaceSlugs: string[];
+  surfaceOther: string;
   certs: string[];
   volume: string;
   timeframe: string;
+  regionSlugs: string[];
   ndaAccepted: boolean;
 };
-
-const METHODS = [
-  "Skärande bearbetning",
-  "Plåt & svets",
-  "Gjutning",
-  "Formsprutning",
-  "3D-printing",
-];
 
 const MATERIALS = [
   "Aluminium",
@@ -76,16 +81,22 @@ export default function IntentForm({
     email: "",
     phone: "",
     projectName: "",
-    method: defaultMethod ?? "Skärande bearbetning",
-    material: defaultMaterial ?? "Aluminium",
+    method: defaultMethod ?? "",
+    material: defaultMaterial ?? "",
+    processSlugs: [],
     tolerance: "Standard (ISO)",
-    surfaceTreatment: "",
+    surfaceSlugs: [],
+    surfaceOther: "",
     certs: [],
     volume: "Prototyp (1–5 st)",
     timeframe: "Inom 2–4 veckor",
+    regionSlugs: [],
     ndaAccepted: true,
   });
   const [yrkesrollAnnat, setYrkesrollAnnat] = useState(false);
+  const [surfaceAnnat, setSurfaceAnnat] = useState(false);
+  const [regionOpen, setRegionOpen] = useState(false);
+  const [showAllMethods, setShowAllMethods] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -101,13 +112,36 @@ export default function IntentForm({
   const set = (key: keyof FormState, value: FormState[typeof key]) =>
     setForm((prev) => ({ ...prev, [key]: value }));
 
-  const toggleCert = (cert: string) =>
+  const toggleIn = (key: "certs" | "processSlugs" | "surfaceSlugs" | "regionSlugs", value: string) =>
     set(
-      "certs",
-      form.certs.includes(cert)
-        ? form.certs.filter((c) => c !== cert)
-        : [...form.certs, cert]
+      key,
+      form[key].includes(value)
+        ? form[key].filter((v) => v !== value)
+        : [...form[key], value]
     );
+
+  // Soft filter: primary methods for the chosen material shown first; the rest
+  // behind "Visa alla metoder". Nothing is ever impossible to select.
+  const primaryMethods = form.material
+    ? MATERIAL_TO_PRIMARY_METHODS[form.material] ?? ALL_METHODS
+    : ALL_METHODS;
+  const secondaryMethods = ALL_METHODS.filter((m) => !primaryMethods.includes(m));
+  const methodInSecondary = secondaryMethods.includes(form.method);
+  const visibleMethods = [
+    ...primaryMethods,
+    ...(showAllMethods || methodInSecondary ? secondaryMethods : []),
+  ];
+  const processOptions = METHOD_TO_PROCESSES[form.method] ?? [];
+
+  const selectMaterial = (material: string) => {
+    // Never clear a chosen/preselected method when material changes.
+    set("material", material);
+    setShowAllMethods(false);
+  };
+
+  const selectMethod = (method: string) => {
+    setForm((prev) => ({ ...prev, method, processSlugs: [] }));
+  };
 
   const handleSubmit = async (e: { preventDefault(): void }) => {
     e.preventDefault();
@@ -135,6 +169,12 @@ export default function IntentForm({
       if (uploadData) drawingUrl = uploadData.path;
     }
 
+    const surfaceLabels = SURFACE_OPTIONS.filter((o) => form.surfaceSlugs.includes(o.slug))
+      .map((o) => o.label);
+    const surfaceText = [...surfaceLabels, form.surfaceOther.trim()]
+      .filter(Boolean)
+      .join(", ");
+
     const { error } = await supabase.from("intent_requests").insert({
       org_nr: form.orgNr || null,
       company_name: form.companyName || null,
@@ -146,7 +186,7 @@ export default function IntentForm({
       method: form.method || null,
       material: form.material || null,
       tolerance: form.tolerance || null,
-      surface_treatment: form.surfaceTreatment || null,
+      surface_treatment: surfaceText || null,
       certs: form.certs.length > 0 ? form.certs : null,
       volume: form.volume || null,
       timeframe: form.timeframe || null,
@@ -154,9 +194,16 @@ export default function IntentForm({
       drawing_url: drawingUrl,
       // Taxonomy slugs (Metalbase docs/taxonomi.md) — the matching engine
       // joins on these; the label fields above are for human readability.
-      capability_slugs: methodToSlugs(form.method, form.surfaceTreatment),
+      capability_slugs: buildCapabilitySlugs({
+        method: form.method,
+        material: form.material,
+        processSlugs: form.processSlugs,
+        surfaceSlugs: form.surfaceSlugs,
+        surfaceOther: form.surfaceOther,
+      }),
       material_slugs: materialToSlugs(form.material),
       cert_slugs: certsToSlugs(form.certs),
+      region_slugs: form.regionSlugs,
     });
 
     setSubmitting(false);
@@ -196,26 +243,21 @@ export default function IntentForm({
 
         <form className="form-card" onSubmit={handleSubmit}>
 
-          {/* Section 1: Bearbetning & material */}
+          {/* Section 1: Projekt + material + metod */}
           <div className="form-section">
-            <span className="form-section-label">Bearbetning &amp; material</span>
+            <span className="form-section-label">Vad gäller förfrågan?</span>
 
-            <label className="input-label">Primär bearbetningsmetod</label>
-            <div className="tag-grid">
-              {METHODS.map((method) => (
-                <label key={method} className="tag-label">
-                  <input
-                    type="radio"
-                    name="method"
-                    checked={form.method === method}
-                    onChange={() => set("method", method)}
-                  />
-                  <span className="tag-content">{method}</span>
-                </label>
-              ))}
-            </div>
+            <label className="input-label">Projektnamn / Benämning (frivilligt)</label>
+            <input
+              type="text"
+              className="input-field"
+              placeholder="T.ex. Kylfläns v.2"
+              value={form.projectName}
+              onChange={(e) => set("projectName", e.target.value)}
+              style={{ marginBottom: "16px" }}
+            />
 
-            <label className="input-label field-sublabel">Materialgrupp</label>
+            <label className="input-label">Materialgrupp</label>
             <div className="tag-grid">
               {MATERIALS.map((material) => (
                 <label key={material} className="tag-label">
@@ -223,46 +265,124 @@ export default function IntentForm({
                     type="radio"
                     name="material"
                     checked={form.material === material}
-                    onChange={() => set("material", material)}
+                    onChange={() => selectMaterial(material)}
                   />
                   <span className="tag-content">{material}</span>
                 </label>
               ))}
             </div>
+
+            <label className="input-label field-sublabel">Primär bearbetningsmetod</label>
+            <div className="tag-grid">
+              {visibleMethods.map((method) => (
+                <label key={method} className="tag-label">
+                  <input
+                    type="radio"
+                    name="method"
+                    checked={form.method === method}
+                    onChange={() => selectMethod(method)}
+                  />
+                  <span className="tag-content">{method}</span>
+                </label>
+              ))}
+              <label className="tag-label">
+                <input
+                  type="radio"
+                  name="method"
+                  checked={form.method === UNSURE_METHOD}
+                  onChange={() => selectMethod(UNSURE_METHOD)}
+                />
+                <span className="tag-content">{UNSURE_METHOD}</span>
+              </label>
+            </div>
+            {secondaryMethods.length > 0 && !showAllMethods && !methodInSecondary && (
+              <button
+                type="button"
+                onClick={() => setShowAllMethods(true)}
+                style={{
+                  background: "none", border: "none", padding: "6px 0 0", cursor: "pointer",
+                  fontSize: "13px", color: "var(--indigo)", textDecoration: "underline",
+                }}
+              >
+                Visa alla metoder
+              </button>
+            )}
+
+            {processOptions.length > 0 && (
+              <>
+                <label className="input-label field-sublabel">
+                  Vill du precisera? (frivilligt — hjälper matchningen)
+                </label>
+                <div className="tag-grid">
+                  {processOptions.map((p) => (
+                    <label key={p.slug} className="tag-label">
+                      <input
+                        type="checkbox"
+                        checked={form.processSlugs.includes(p.slug)}
+                        onChange={() => toggleIn("processSlugs", p.slug)}
+                      />
+                      <span className="tag-content">{p.label}</span>
+                    </label>
+                  ))}
+                </div>
+              </>
+            )}
           </div>
 
           {/* Section 2: Kvalitet & certifiering */}
           <div className="form-section">
             <span className="form-section-label">Kvalitet &amp; certifiering</span>
 
-            <div className="input-row" style={{ alignItems: "flex-start" }}>
-              <div>
-                <label className="input-label">Toleranskrav</label>
-                <div className="tag-grid">
-                  {["Standard (ISO)", "Fina (< 0.01mm)"].map((tol) => (
-                    <label key={tol} className="tag-label">
-                      <input
-                        type="radio"
-                        name="tol"
-                        checked={form.tolerance === tol}
-                        onChange={() => set("tolerance", tol)}
-                      />
-                      <span className="tag-content">{tol}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-              <div>
-                <label className="input-label">Ytbehandling</label>
-                <input
-                  type="text"
-                  className="input-field"
-                  placeholder="T.ex. Anodisering, lackering"
-                  value={form.surfaceTreatment}
-                  onChange={(e) => set("surfaceTreatment", e.target.value)}
-                />
-              </div>
+            <label className="input-label">Toleranskrav</label>
+            <div className="tag-grid">
+              {["Standard (ISO)", "Fina (< 0.01mm)"].map((tol) => (
+                <label key={tol} className="tag-label">
+                  <input
+                    type="radio"
+                    name="tol"
+                    checked={form.tolerance === tol}
+                    onChange={() => set("tolerance", tol)}
+                  />
+                  <span className="tag-content">{tol}</span>
+                </label>
+              ))}
             </div>
+
+            <label className="input-label field-sublabel">Ytbehandling (frivilligt)</label>
+            <div className="tag-grid">
+              {SURFACE_OPTIONS.map((o) => (
+                <label key={o.slug} className="tag-label">
+                  <input
+                    type="checkbox"
+                    checked={form.surfaceSlugs.includes(o.slug)}
+                    onChange={() => toggleIn("surfaceSlugs", o.slug)}
+                  />
+                  <span className="tag-content">{o.label}</span>
+                </label>
+              ))}
+              <label className="tag-label">
+                <input
+                  type="checkbox"
+                  checked={surfaceAnnat}
+                  onChange={(e) => {
+                    setSurfaceAnnat(e.target.checked);
+                    if (!e.target.checked) set("surfaceOther", "");
+                  }}
+                />
+                <span className="tag-content">Annat</span>
+              </label>
+            </div>
+            {surfaceAnnat && (
+              <input
+                type="text"
+                className="input-field"
+                placeholder="Beskriv ytbehandlingen"
+                value={form.surfaceOther}
+                onChange={(e) => set("surfaceOther", e.target.value)}
+                style={{ marginTop: "8px" }}
+                autoFocus
+              />
+            )}
 
             <label className="input-label field-sublabel">Certifikatkrav på leverantör</label>
             <div className="tag-grid">
@@ -271,7 +391,7 @@ export default function IntentForm({
                   <input
                     type="checkbox"
                     checked={form.certs.includes(cert)}
-                    onChange={() => toggleCert(cert)}
+                    onChange={() => toggleIn("certs", cert)}
                   />
                   <span className="tag-content">{cert}</span>
                 </label>
@@ -313,14 +433,49 @@ export default function IntentForm({
             </div>
 
             <div style={{ marginTop: "16px" }}>
-              <label className="input-label">Projektnamn / Benämning</label>
-              <input
-                type="text"
-                className="input-field"
-                placeholder="T.ex. Kylfläns v.2"
-                value={form.projectName}
-                onChange={(e) => set("projectName", e.target.value)}
-              />
+              <label className="input-label">Geografiskt krav på leverantör</label>
+              <div style={{ display: "flex", gap: "10px", alignItems: "flex-start" }}>
+                <input
+                  type="checkbox"
+                  id="region-limit"
+                  checked={regionOpen}
+                  onChange={(e) => {
+                    setRegionOpen(e.target.checked);
+                    if (!e.target.checked) set("regionSlugs", []);
+                  }}
+                  style={{ marginTop: "3px", flexShrink: 0 }}
+                />
+                <label htmlFor="region-limit" style={{ fontSize: "13px", color: "var(--slate-navy-light)", lineHeight: 1.6 }}>
+                  Begränsa geografiskt (frivilligt). Utan begränsning matchar vi i hela
+                  Sverige — ett geografiskt krav minskar antalet möjliga leverantörer.
+                </label>
+              </div>
+              {regionOpen && (
+                <div style={{ marginTop: "12px" }}>
+                  {LAN_GROUPS.map(({ group, lan }) => (
+                    <div key={group} style={{ marginBottom: "10px" }}>
+                      <div style={{
+                        fontSize: "12px", fontWeight: 700, color: "var(--turquoise)",
+                        fontFamily: "var(--font-meta)", marginBottom: "6px", textTransform: "uppercase",
+                      }}>
+                        {group}
+                      </div>
+                      <div className="tag-grid">
+                        {lan.map((l) => (
+                          <label key={l.slug} className="tag-label">
+                            <input
+                              type="checkbox"
+                              checked={form.regionSlugs.includes(l.slug)}
+                              onChange={() => toggleIn("regionSlugs", l.slug)}
+                            />
+                            <span className="tag-content">{l.label}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
 
