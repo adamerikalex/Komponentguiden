@@ -104,6 +104,8 @@ Each item below has a plain-language explanation of what it is and why it matter
 
 **IntentForm v2** (implemented 2026-07-07, commit `ef27d71`, live): material-first flow with soft-filtered methods ("Visa alla metoder" escape hatch, "Osäker / öppen för förslag" option, new "Komposittillverkning" option), optional process-level precision chips, ytbehandling as taxonomy chips + "Annat" fallback, projektnamn moved to first field, and a län-level "Begränsa geografiskt" multi-select behind progressive disclosure (`region_slugs text[]`, empty = hela Sverige, GIN-indexed). Spec: `docs/intentform-v2-spec.md`. All option lists map 1:1 to slugs in Masterbase `docs/taxonomi.md` (PR #98). Refinements queued as item 26 below.
 
+**FAQ blocks + FAQPage structured data, 6 priority pages** (implemented 2026-07-07, commit `4add617`): 24 Q&As on the CNC, plåt/svets, aluminium, rostfritt, AS9100 and Småland pages, written to be quotable by AI search engines, each emitting FAQPage JSON-LD. Content lives in `content/categories/faq.ts`; rendering is automatic for any slug with entries. Remaining 14 pages tracked in item 16. Hard numbers deliberately hedged pending fact-check (item 11).
+
 **Taxonomy slug mapping** (implemented 2026-07-07, during this session): when a buyer submits the form, the code now translates their choices into standardized machine-readable tags ("slugs") and saves those alongside the readable text. *Plain version: "Plåt & svets" is a label for humans; `platbearbetning` + `svetsning` are the tags the matching engine will use to find suppliers. Both are now saved on every submission, and older submissions were back-translated too. This means the matching engine can be built on clean data from day one.* Includes: `src/lib/taxonomy.ts`, updated form, database columns + backfill.
 
 ### 🔴 Must-have
@@ -228,7 +230,7 @@ Precise context so a future session can pick up any backlog item without re-deri
 
 ### Nice-to-have item specifics
 
-- **JSON-LD (15):** inject via `<script type="application/ld+json">` in server components. `layout.tsx`: Organization (name, url, logo, contactPoint info@komponentguiden.se — add org.nr when public). `[category]/page.tsx`: Service + FAQPage (FAQ content needs writing first — add a `faq: {q,a}[]` field to `CategoryPage` type in `content/categories/index.ts`). `blogg/[slug]/page.tsx`: BlogPosting using frontmatter `title/description/publishedAt/tags`.
+- **JSON-LD (15):** PARTIALLY DONE — FAQPage JSON-LD live on 6 category pages via `content/categories/faq.ts` + `[category]/page.tsx` (2026-07-07). Still pending: Organization in `layout.tsx` (name, url, logo, contactPoint info@komponentguiden.se — add org.nr when public), Service on category pages, BlogPosting in `blogg/[slug]/page.tsx` using frontmatter `title/description/publishedAt/tags`.
 - **/om-oss (18):** rename `src/app/about/` → `src/app/om-oss/`, add `redirects()` in `next.config.ts` (`/about` → `/om-oss`, permanent). Update Navbar/Footer links. Team section blocked on owner input (names/bios/photos).
 - **NDA + honeypot (20):** `ndaAccepted: true` in initial `FormState` → `false`; require it before submit (it gates sharing uploaded material with suppliers). Honeypot: hidden text input; if filled, fake-success without insert.
 - **Blog internal links (19):** posts currently link only to `/#intent-form` (+2 post-to-post links); zero links to category pages. Verified via grep. Add contextual links in each post to its sibling category page.
