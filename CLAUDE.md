@@ -115,6 +115,7 @@ v2 (material-first dynamic form, item 26 + full spec in Appendix B).
 - [x] MetricsSection with animated number scramble (hardcoded values, to be replaced with live DB counts) — NOTE: SSR HTML shows scramble-min values (1000/10/0), not finals; fix per REVIEW Appendix B item A5
 - [x] ScrollyTelling — 4 stages, 400vh
 - [x] Taxonomy slug mapping at insert (`src/lib/taxonomy.ts`, 2026-07-07)
+- [x] IntentForm v2 — material-first, dynamic methods, precision chips, ytbehandling chips, region/län (`docs/intentform-v2-spec.md`, 2026-07-07; v2.1 follow-ups = backlog item 26)
 - [ ] Masterbase anon key — needed before matching engine can be built
 - [ ] `matches` table in Komponentguiden Supabase — schema ready to create once key is available
 - [ ] Match-intent Edge Function — queries Masterbase live, scores, inserts into `matches`

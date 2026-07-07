@@ -1,8 +1,9 @@
 # IntentForm v2 — Proposal & Build Spec
 
-*2026-07-07 · Supersedes the shorter spec in REVIEW-AND-BACKLOG.md Appendix B (item 26).
-Ready to build from. Nothing here changes existing slugs, Supabase contracts, or
-category-page routes — v2 is additive.*
+*2026-07-07 · **IMPLEMENTED** same day (commit `ef27d71`), live on komponentguiden.vercel.app.
+Follow-ups (v2.1: "Gjutning & smide" rename, omitted chips, montering-kvalitet scope
+decision, matrix validation) tracked as item 26 in REVIEW-AND-BACKLOG.md.
+Nothing here changes existing slugs, Supabase contracts, or category-page routes — v2 is additive.*
 
 ## Design principles (settled in owner discussion 2026-07-07)
 
