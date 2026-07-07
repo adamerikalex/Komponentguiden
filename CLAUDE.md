@@ -41,7 +41,7 @@ src/
     MetricsSection.tsx       # 'use client' — IntersectionObserver number scramble animation
     IntentForm.tsx           # 'use client' — Supabase insert + Storage file upload
 content/
-  posts/                     # 5 markdown blog posts (gray-matter frontmatter)
+  blogg/                     # 5 markdown blog posts (gray-matter frontmatter)
   categories/index.ts        # Data for 20 category landing pages
 public/
   part.png, map.png, network.png, team.png
@@ -62,8 +62,9 @@ public/
 
 ## Supabase
 - **Komponentguiden project:** see `.env.local` for URL + anon key
-- **Table:** `intent_requests` — all form fields, `status` column ('new' | 'matched' | 'sent'), RLS anon INSERT only
+- **Table:** `intent_requests` — all form fields, `status` column ('new' | 'matched' | 'sent'), RLS anon INSERT only. Since 2026-07-07 also `capability_slugs`/`material_slugs`/`cert_slugs text[]` (GIN-indexed), populated at insert via `src/lib/taxonomy.ts`; `certs` is `text[]`
 - **Storage:** `drawings` bucket — private, anon INSERT RLS for file uploads
+- **Migrations:** applied MANUALLY via Supabase SQL editor (no CLI link); SQL files tracked in `supabase/migrations/`
 
 ## Matching architecture (planned, not yet built)
 Supplier data lives in **Masterbase** — the co-founder's separate platform at `https://github.com/studio-shields/Masterbase` (Supabase project `yvggpetxbfopwhqarebh`). The `companies` table (~689k rows) contains industrial suppliers filtered by SNI 22–25 with AI-extracted `maskinpark` (JSONB: machine inventory by category) and `certifieringar` (text[]).
@@ -78,9 +79,13 @@ Supplier data lives in **Masterbase** — the co-founder's separate platform at 
 **Shared capability taxonomy (2026-07, replaces raw maskinpark categories):**
 Matching is based on taxonomy slugs defined in the Masterbase repo —
 `docs/taxonomi.md` (8 groups, ~70 process slugs, materials, cert types).
-IntentForm options map to the SAME slugs: `intent_requests` gets
-`capability_slugs text[]`, `material_slugs text[]`, `cert_slugs text[]`
-(mapped from form selections at insert). Supplier side exposes
+IntentForm options map to the SAME slugs: **DONE 2026-07-07** — `intent_requests`
+has `capability_slugs text[]`, `material_slugs text[]`, `cert_slugs text[]`,
+mapped at insert via `src/lib/taxonomy.ts`; old rows backfilled
+(migration `supabase/migrations/20260707_intent_requests_taxonomy_slugs.sql`).
+Taxonomy source: Masterbase branch `docs/metalbase-datamall` (PR #98,
+unmerged 2026-07-07; DDL drafts in `migrations-utkast/`, NOT applied to live DB).
+Slugs are never renamed, only aliased. Supplier side exposes
 `company_capabilities`/`company_certifications` via a scoped read-only view
 `metalbase_public` — never the service key. Legacy `maskinpark` jsonb
 (categories: Laser & stans | Kantpress | Svets | Skärande bearbetning |
@@ -91,6 +96,15 @@ for the demand-data flywheel (intents + outcomes written back on org_nr).
 
 **Blocker:** Need Masterbase anon key to query their REST API. Co-founder must share it or grant Supabase project access.
 
+## Review & backlog
+`REVIEW-AND-BACKLOG.md` (repo root, last updated 2026-07-07) is the current full
+review AND the living backlog: design/content/business reflection, SEO & AI-search
+audit (site NOT indexed; domain komponentguiden.se not yet purchased — live at
+komponentguiden.vercel.app), Metalbase integration status, and a categorized backlog
+(must-have / nice-to-have / done). **Appendix B there has per-item implementation
+notes — read it before starting any backlog item.** Notable spec'd items: IntentForm
+v2 (material-first dynamic form, item 26 + full spec in Appendix B).
+
 ## Current status (as of July 2026)
 - [x] HTML prototype → Next.js migration complete
 - [x] All routes live: `/`, `/concierge`, `/about`, `/akut`, `/support`, `/sekretesspolicy`, `/blogg`, 20× `/[category]`
@@ -98,8 +112,9 @@ for the demand-data flywheel (intents + outcomes written back on org_nr).
 - [x] Supabase `intent_requests` table + RLS (anon INSERT only)
 - [x] Supabase Storage `drawings` bucket (private, anon INSERT RLS)
 - [x] Hamburger mobile nav
-- [x] MetricsSection with animated number scramble (hardcoded values, to be replaced with live DB counts)
+- [x] MetricsSection with animated number scramble (hardcoded values, to be replaced with live DB counts) — NOTE: SSR HTML shows scramble-min values (1000/10/0), not finals; fix per REVIEW Appendix B item A5
 - [x] ScrollyTelling — 4 stages, 400vh
+- [x] Taxonomy slug mapping at insert (`src/lib/taxonomy.ts`, 2026-07-07)
 - [ ] Masterbase anon key — needed before matching engine can be built
 - [ ] `matches` table in Komponentguiden Supabase — schema ready to create once key is available
 - [ ] Match-intent Edge Function — queries Masterbase live, scores, inserts into `matches`
