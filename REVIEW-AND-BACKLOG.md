@@ -134,7 +134,7 @@ Each item below has a plain-language explanation of what it is and why it matter
 ### 🟡 Nice-to-have
 
 15. **Structured data (JSON-LD).** Invisible labels in the page code that tell Google and AI assistants exactly what things are ("this is a company, org.nr X", "this is an article, published Y"). Makes you more likely to be quoted correctly by ChatGPT/Perplexity and eligible for richer Google results. Cheap to add, compounding payoff — first candidate to promote to must-have.
-16. **FAQ blocks on landing pages.** 3–5 real questions with direct answers ("Vad kostar CNC-bearbetning i Sverige?"). Question-and-answer format is what AI search engines quote most readily.
+16. **FAQ blocks on landing pages.** 3–5 real questions with direct answers — the format AI search engines quote most readily. **6 of 20 pages DONE 2026-07-07** (commit `4add617`: CNC, plåt/svets, aluminium, rostfritt, AS9100, Småland) incl. FAQPage JSON-LD rendering in `[category]/page.tsx`. Remaining 14: add entries to `content/categories/faq.ts` (keyed by slug) — rendering and JSON-LD are already automatic for any slug with entries.
 17. **Fix the footer LinkedIn link** (currently goes nowhere) and create the company LinkedIn page — also an identity signal AI assistants use to verify you're a real company.
 18. **Rename `/about` to `/om-oss`** (the only English address on a Swedish site) and add org.nr, founder names, and photos. Team section is blocked on you providing names and bios *(carried over from the GTM session)*.
 19. **Author names and dates on blog posts; cross-links between articles and landing pages.** Both are credibility/SEO refinements of already-good content.
