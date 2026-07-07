@@ -5,6 +5,7 @@ import {
   FileCheck, MapPin, Layers, Cpu, Leaf,
 } from "lucide-react";
 import { categoryPages, getCategoryBySlug } from "content/categories";
+import { FAQS } from "content/categories/faq";
 import IntentForm from "@/components/IntentForm";
 
 const ICONS = {
@@ -35,6 +36,7 @@ export default async function CategoryPage({
   const { category } = await params;
   const page = getCategoryBySlug(category);
   if (!page) notFound();
+  const faq = FAQS[category];
 
   return (
     <>
@@ -96,6 +98,37 @@ export default async function CategoryPage({
           </div>
         </div>
       </section>
+
+      {/* FAQ + FAQPage JSON-LD */}
+      {faq && (
+        <section className="cat-pain">
+          <div className="container">
+            <div className="cat-pain-inner">
+              <h2>Vanliga frågor</h2>
+              {faq.map((f) => (
+                <div key={f.q} style={{ marginTop: "24px" }}>
+                  <h3 style={{ fontSize: "17px", marginBottom: "8px" }}>{f.q}</h3>
+                  <p>{f.a}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "FAQPage",
+                mainEntity: faq.map((f) => ({
+                  "@type": "Question",
+                  name: f.q,
+                  acceptedAnswer: { "@type": "Answer", text: f.a },
+                })),
+              }),
+            }}
+          />
+        </section>
+      )}
 
       {/* Form */}
       <IntentForm
