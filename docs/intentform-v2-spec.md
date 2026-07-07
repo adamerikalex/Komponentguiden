@@ -17,11 +17,12 @@ category-page routes — v2 is additive.*
 ## New section order
 
 ```
-1. Materialgrupp                    (radio — moved to first)
+0. Projektnamn / benämning          (text, frivilligt — MOVED to very first field, from Volym)
+1. Materialgrupp                    (radio — moved to first choice)
 2. Bearbetningsmetod                (radio — filtered by material; + 2 new options)
    └─ optional: "Vill du precisera?" process chips (multi-select)
-3. Kvalitet & certifiering          (unchanged: tolerans, ytbehandling, certs)
-4. Volym & leverans                 (unchanged + NEW: Geografiskt krav)
+3. Kvalitet & certifiering          (tolerans, certs unchanged; ytbehandling → CHIPS, see below)
+4. Volym & leverans                 (minus projektnamn; + NEW: Geografiskt krav)
 5. Ritningar & underlag             (unchanged)
 6. Kontaktuppgifter                 (unchanged)
 7. NDA + submit                     (unchanged)
@@ -86,6 +87,22 @@ slugs from Masterbase `docs/taxonomi.md`:
 **Storage rule:** `capability_slugs` = group slug(s) **always**, + selected process slugs
 appended. Skipping chips = exactly v1 output. Matching engine per taxonomi.md: group-level
 default, process-level when specified. No schema change.
+
+## Step 3 change — Ytbehandling: free text → chips (owner decision 2026-07-07)
+
+Replace the free-text field with an optional multi-select chip row (same pattern as certs),
+labels → slugs from taxonomi.md's ytbehandling group:
+
+Anodisering→`anodisering` · Pulverlackering→`pulverlackering` · Våtlackering→`vatlackering`
+· Elförzinkning→`elforzinkning` · Varmförzinkning→`varmforzinkning`
+· Härdning/värmebehandling→`hardning-varmebehandling` · Blästring→`blastring`
+· Polering/ytfinish→`polering-slipning-ytfinish` · Fosfatering→`fosfatering`
+· Kemisk ytbehandling→`kemisk-ytbehandling` · **Annat** (reveals small free-text input)
+
+**Storage:** selected chips append their process slugs to `capability_slugs` (replaces v1's
+blanket `ytbehandling` group tag — strictly more precise). "Annat" free text still writes
+`surface_treatment` (column unchanged) and appends the group slug `ytbehandling`. No chips,
+no text → nothing appended (v1-compatible).
 
 ## Step 4 addition — Geografiskt krav (region/län)
 
