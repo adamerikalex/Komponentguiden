@@ -10,26 +10,33 @@ type Metric = {
   format: (n: number) => string;
 };
 
+// TODO: replace with a live count() from Masterbase once the anon key lands.
+// This is the aggregate of maskinpark entries across the analysed companies
+// (one registered machine type = one identified machine/process in a supplier's
+// park — NOT a physical-unit count). PLACEHOLDER value below — swap for the real
+// figure before relying on it.
+const REGISTERED_MACHINE_TYPES = 1240; // PLACEHOLDER — needs real maskinpark count
+
 const METRICS: Metric[] = [
   {
     final: 8860,
-    label: "Svenska företag inom bearbetning av metall, plåt och komposit",
+    label: "Företag inom bearbetning av metall, plast och komposit",
     scrambleMin: 1000,
     scrambleMax: 9999,
-    format: (n) => new Intl.NumberFormat("sv-SE").format(n),
+    format: (n) => String(n),
   },
   {
     final: 171,
-    label: "Kartlagda företag i vår databas",
+    label: "Analyserade företag i vår databas",
     scrambleMin: 10,
     scrambleMax: 999,
     format: (n) => String(n),
   },
   {
-    final: 0,
-    label: "Antal presenterade matchningar",
-    scrambleMin: 0,
-    scrambleMax: 0,
+    final: REGISTERED_MACHINE_TYPES,
+    label: "Registrerade maskintyper",
+    scrambleMin: 100,
+    scrambleMax: 1999,
     format: (n) => String(n),
   },
 ];
@@ -38,9 +45,10 @@ const FRAMES = 40;
 const INTERVAL_MS = 40;
 
 export default function MetricsSection() {
-  const [values, setValues] = useState(
-    METRICS.map((m) => (m.final === 0 ? 0 : m.scrambleMin))
-  );
+  // Initialise to the real finals so the server-rendered HTML (and any non-JS
+  // reader/crawler) shows the true numbers. The scramble runs on top after
+  // hydration purely as decoration.
+  const [values, setValues] = useState(METRICS.map((m) => m.final));
   const ref = useRef<HTMLElement>(null);
   const hasAnimated = useRef(false);
   const intervals = useRef<ReturnType<typeof setInterval>[]>([]);
@@ -53,7 +61,7 @@ export default function MetricsSection() {
         observer.disconnect();
 
         METRICS.forEach((metric, i) => {
-          if (metric.final === 0) return;
+          if (metric.final === 0) return; // nothing to animate for a zero metric
 
           let frame = 0;
           const interval = setInterval(() => {
