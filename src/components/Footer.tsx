@@ -92,18 +92,9 @@ export default function Footer() {
 
         <div className="footer-bottom">
           <span>© 2026 Komponentguiden AB. Alla rättigheter reserverade.</span>
-          <span style={{ display: "flex", gap: "16px" }}>
-            <a
-              href="#"
-              style={{
-                color: "var(--slate-navy-light)",
-                fontSize: "13px",
-                textDecoration: "none",
-              }}
-            >
-              LinkedIn
-            </a>
-          </span>
+          {/* LinkedIn link removed until the company page exists (a dead social
+              link hurts trust more than none). Re-add here + as sameAs in the
+              Organization JSON-LD once the page is live — see backlog item 17. */}
         </div>
       </div>
     </footer>
