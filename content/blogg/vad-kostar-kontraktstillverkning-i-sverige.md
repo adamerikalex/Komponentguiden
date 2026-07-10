@@ -131,4 +131,6 @@ Priser för svensk legotillverkning varierar brett beroende på metod, material 
 
 Det bästa sättet att få ett rättvisande pris är att skicka en faktisk spec till flera verkstäder parallellt och jämföra på lika villkor.
 
+Se även våra sidor om [CNC-bearbetning](/cnc-bearbetning) och [legotillverkning i aluminium](/legotillverkning-aluminium).
+
 **Vill ni ha fem matchade offerter inom 48 timmar?** [Starta en kostnadsfri matchning →](/#intent-form)

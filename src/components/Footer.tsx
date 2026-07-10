@@ -26,7 +26,7 @@ export default function Footer() {
                 <Link href="/concierge">Concierge</Link>
               </li>
               <li>
-                <Link href="/about">Om oss</Link>
+                <Link href="/om-oss">Om oss</Link>
               </li>
             </ul>
           </div>

@@ -19,7 +19,7 @@ Den här guiden går igenom processen steg för steg — från att definiera kra
 Det vanligaste misstaget är att börja söka för tidigt, utan en tydlig kravbild. Innan du kontaktar en enda verkstad bör du ha svar på följande:
 
 **Tillverkningsmässiga krav**
-- Vilken bearbetningsmetod krävs? (Skärande bearbetning, plåt och svets, gjutning, formsprutning?)
+- Vilken bearbetningsmetod krävs? ([Skärande bearbetning](/cnc-bearbetning), [plåt och svets](/plat-och-svets), [gjutning](/gjutning), [formsprutning](/formsprutning)?)
 - Vilket material? (Aluminium, stål, rostfritt, titan, plast?)
 - Vilka toleranskrav gäller? (Standard ISO, eller fina toleranser under 0,01 mm?)
 - Krävs ytbehandling? (Anodisering, lackering, hårdkromning?)

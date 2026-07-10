@@ -99,4 +99,6 @@ Välj **CNC-bearbetning** när: volymen är under 500 st, materialet är metall,
 
 Välj **formsprutning** när: volymen är över 1 000–2 000 st, materialet är plast, ytfinishen är viktig, och du kan avsätta 3–6 månader för verktygsutveckling.
 
+Se även våra sidor om [CNC-bearbetning](/cnc-bearbetning) och [formsprutning](/formsprutning).
+
 **Osäker på vilken metod som passar ert projekt?** Starta en matchning på Komponentguiden — vi matchar er spec mot verkstäder med rätt maskinpark och kompetens, oavsett metod. [Starta kostnadsfri matchning →](/#intent-form)

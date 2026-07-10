@@ -12,6 +12,7 @@ export type PostMeta = {
   description: string;
   publishedAt: string;
   tags: string[];
+  author?: string; // optional frontmatter override; falls back to Komponentguiden
 };
 
 export type Post = PostMeta & { contentHtml: string };

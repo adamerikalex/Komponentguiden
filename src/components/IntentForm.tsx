@@ -93,9 +93,11 @@ export default function IntentForm({
     volume: "Prototyp (1–5 st)",
     timeframe: "Inom 2–4 veckor",
     regionSlugs: [],
-    ndaAccepted: true,
+    ndaAccepted: false,
     marketingConsent: false,
   });
+  // Honeypot (B20): a hidden field real users never see. Bots fill it.
+  const [honeypot, setHoneypot] = useState("");
   const [yrkesrollAnnat, setYrkesrollAnnat] = useState(false);
   const [surfaceAnnat, setSurfaceAnnat] = useState(false);
   const [regionOpen, setRegionOpen] = useState(false);
@@ -155,8 +157,24 @@ export default function IntentForm({
     setSubmitError(null);
     setDrawingFailed(false);
 
+    // Honeypot (B20): if the hidden field is filled it's a bot — fake success
+    // without inserting so the bot moves on, and no junk row lands in the DB.
+    if (honeypot) {
+      setSubmitting(false);
+      setSubmitted(true);
+      return;
+    }
+
     if (!form.email) {
       setSubmitError("E-postadress krävs.");
+      setSubmitting(false);
+      return;
+    }
+
+    if (!form.ndaAccepted) {
+      setSubmitError(
+        "Du behöver godkänna sekretessvillkoren innan vi kan dela din förfrågan med leverantörer."
+      );
       setSubmitting(false);
       return;
     }
@@ -282,6 +300,19 @@ export default function IntentForm({
         </div>
 
         <form className="form-card" onSubmit={handleSubmit}>
+
+          {/* Honeypot — hidden from users (off-screen, not tabbable, aria-hidden).
+              Bots that autofill every field will trip it; real users never see it. */}
+          <input
+            type="text"
+            name="company_website"
+            tabIndex={-1}
+            autoComplete="off"
+            aria-hidden="true"
+            value={honeypot}
+            onChange={(e) => setHoneypot(e.target.value)}
+            style={{ position: "absolute", left: "-9999px", width: "1px", height: "1px", opacity: 0 }}
+          />
 
           {/* Section 1: Projekt + material + metod */}
           <div className="form-section">

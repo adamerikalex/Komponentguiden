@@ -88,7 +88,7 @@ AS9100-certifiering är ovanligare än ISO 9001 i det svenska SME-segmentet — 
 
 Certifierade leverantörer kan sökas i **OASIS-databasen** (Online Aerospace Supplier Information System), som är det internationellt accepterade registret för AS9100-, AS9120- och AS9110-certifierade organisationer och drivs av IAQG: [iaqg.org/tools/oasis](https://iaqg.org/tools/oasis/)
 
-Alternativt kan ni specificera AS9100-kravet direkt i en matchningsförfrågan. Komponentguiden filtrerar mot certifieringskrav i sin matchningsalgoritm och returnerar enbart verkstäder med verifierad AS9100-certifiering. [Starta en matchning med AS9100-krav →](/#intent-form)
+Alternativt kan ni specificera AS9100-kravet direkt i en matchningsförfrågan. Komponentguiden filtrerar mot certifieringskrav i sin matchningsalgoritm och returnerar enbart verkstäder med verifierad AS9100-certifiering. Se även vår sida om [AS9100-certifierade legotillverkare i Sverige](/as9100-certifierade-leverantorer). [Starta en matchning med AS9100-krav →](/#intent-form)
 
 ---
 

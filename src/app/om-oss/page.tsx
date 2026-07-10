@@ -1,4 +1,12 @@
-export default function AboutPage() {
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Om oss – Komponentguiden",
+  description:
+    "Komponentguiden kopplar samman industriella inköpare med Sveriges legotillverkare för att bevara svenskt industrihantverk och frigöra underutnyttjad kapacitet.",
+};
+
+export default function OmOssPage() {
   return (
     <>
       <section

@@ -145,4 +145,6 @@ Om detaljen inte är säkerhetskritisk och ordern är ett engångsköp i låg vo
 
 ---
 
+Se även vår sida om [AS9100-certifierade leverantörer](/as9100-certifierade-leverantorer) för försvars- och flygtillämpningar, och guiden [Hur hittar man en ny legotillverkare?](/blogg/hur-hittar-man-en-ny-legotillverkare).
+
 **Behöver ni hitta leverantörer att kvalificera?** Komponentguiden matchar er tekniska förfrågan mot rätt verkstäder — kostnadsfritt, inom 48 timmar. [Starta en matchning →](/#intent-form)

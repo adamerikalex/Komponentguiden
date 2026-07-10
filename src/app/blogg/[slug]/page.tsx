@@ -48,7 +48,9 @@ export default async function BloggPostPage({
             dateModified: post.publishedAt,
             keywords: post.tags.join(", "),
             inLanguage: "sv-SE",
-            author: { "@type": "Organization", name: "Komponentguiden", url: SITE_URL },
+            author: post.author
+              ? { "@type": "Person", name: post.author }
+              : { "@type": "Organization", name: "Komponentguiden", url: SITE_URL },
             publisher: { "@type": "Organization", name: "Komponentguiden", url: SITE_URL },
             mainEntityOfPage: { "@type": "WebPage", "@id": postUrl },
             url: postUrl,
@@ -61,7 +63,7 @@ export default async function BloggPostPage({
       <article>
         <span className="metadata">{post.tags.join(" · ")}</span>
         <h1 className="post-title">{post.title}</h1>
-        <p className="post-date">{formatDate(post.publishedAt)}</p>
+        <p className="post-date">Av {post.author ?? "Komponentguiden"} · {formatDate(post.publishedAt)}</p>
         <div
           className="prose"
           dangerouslySetInnerHTML={{ __html: post.contentHtml }}
