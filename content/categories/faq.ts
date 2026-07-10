@@ -1,6 +1,6 @@
 // FAQ content per category page (keyed by slug). Rendered on the page +
 // emitted as FAQPage JSON-LD for Google/AI-search citation.
-// Six highest-priority pages done (2026-07-07); remaining 14 = backlog.
+// All 20 category pages covered (6 on 2026-07-07, remaining 14 on 2026-07-10).
 // Keep answers factual and self-contained — AI assistants quote these verbatim.
 
 export type Faq = { q: string; a: string };
@@ -117,6 +117,228 @@ export const FAQS: Record<string, Faq[]> = {
     {
       q: "Täcker ni hela Småland?",
       a: "Ja — Jönköpings, Kronobergs och Kalmar län, inklusive Gnosjöbygden, Värnamo, Nässjö, Eksjö och kustkommunerna. Vårt geografiska filter arbetar på länsnivå, så ni väljer själva om kravet ska gälla ett län eller hela regionen.",
+    },
+  ],
+
+  // ─── Metoder ───────────────────────────────────────────────
+
+  "gjutning": [
+    {
+      q: "Vilken gjutmetod passar min volym?",
+      a: "Tumregel: sandgjutning för prototyper och låga volymer (låg verktygskostnad, högre styckpris), kokillgjutning för mellanserier, och pressgjutning för höga volymer där den stora verktygsinvesteringen fördelas på många detaljer. Precisionsgjutning väljs när geometrin är komplex och ytkraven höga. Ange volym och geometri i förfrågan så matchar vi mot gjuterier med rätt metod.",
+    },
+    {
+      q: "Vilka material kan gjutas?",
+      a: "De vanligaste är aluminiumlegeringar, gråjärn och segjärn, gjutstål samt kopparbaserade legeringar som brons och mässing. Legeringsvalet styr både gjutmetod och vilka gjuterier som har rätt smält- och formkompetens — alla gjuterier hanterar inte alla material.",
+    },
+    {
+      q: "Varför dominerar verktygskostnaden priset vid låga volymer?",
+      a: "Formen eller verktyget är en fast kostnad som betalas oavsett antal. Vid en handfull detaljer slår den igenom hårt på styckpriset; vid tusentals detaljer fördelas den och blir försumbar. Det är därför metodvalet hänger så tätt ihop med din volym.",
+    },
+  ],
+
+  "formsprutning": [
+    {
+      q: "Vad kostar ett formsprutningsverktyg?",
+      a: "Ett mjukt prototypverktyg i aluminium ligger typiskt i storleksordningen tiotusentals kronor, medan ett härdat stålverktyg för serieproduktion kan kosta hundratusentals kronor beroende på antal kaviteter och komplexitet. Verktyget är den stora engångsinvesteringen — styckpriset i serie är däremot lågt.",
+    },
+    {
+      q: "Mjukt verktyg eller stålverktyg — vad ska jag välja?",
+      a: "Mjuka aluminiumverktyg är billigare och snabbare att ta fram men håller för begränsade antal cykler — bra för prototyper och små serier. Stålverktyg kostar mer men klarar hundratusentals till miljoner cykler. Valet styrs av din totala volym över produktens livslängd.",
+    },
+    {
+      q: "Hur stor volym krävs för att formsprutning ska löna sig?",
+      a: "Eftersom verktyget är en betydande fast kostnad blir formsprutning konkurrenskraftigt först vid några tusen detaljer och uppåt. Under det är CNC-bearbetning av plastblock eller 3D-printing ofta billigare. Är du osäker kan leverantören räkna på brytpunkten utifrån din årsvolym.",
+    },
+    {
+      q: "Vilka plaster kan formsprutas?",
+      a: "De flesta termoplaster: standardplaster som ABS, PP och PE, tekniska plaster som PA (nylon), POM och PC, samt högpresterande polymerer som PEEK. Materialvalet påverkar krympning, verktygsdesign och processfönster — ange plasttyp i förfrågan om den är låst.",
+    },
+  ],
+
+  "3d-printing": [
+    {
+      q: "Vilka 3D-printtekniker används industriellt?",
+      a: "De vanligaste är FDM (smält tråd, billiga plastprototyper), SLS (lasersintrat nylonpulver), SLA och PolyJet (härdad fotopolymer, hög detaljrikedom) samt SLM och DMLS för metall. Teknikerna skiljer sig fundamentalt i material, precision och hållfasthet — rätt val beror på applikationen.",
+    },
+    {
+      q: "Kan man 3D-printa i metall?",
+      a: "Ja — SLM och DMLS bygger detaljer lager för lager ur metallpulver som titan (Ti-6Al-4V), rostfritt, aluminium och nickelbaserade legeringar som Inconel. Med efterbehandling som HIP (het isostatisk pressning) närmar sig hållfastheten smitt material, vilket gör tekniken gångbar för försvars- och flygkomponenter.",
+    },
+    {
+      q: "När är 3D-printing bättre än CNC-bearbetning?",
+      a: "Additiv tillverkning vinner vid komplex geometri (inre kanaler, gitterstrukturer), vid små volymer utan verktygskostnad, och när ledtiden är kritisk — prototyper kan ofta levereras på några dagar. Vid enkla geometrier i serie är CNC eller gjutning oftast billigare.",
+    },
+  ],
+
+  // ─── Material ───────────────────────────────────────────────
+
+  "titan-bearbetning": [
+    {
+      q: "Varför är titan svårt att bearbeta?",
+      a: "Titan leder värme dåligt, så skärvärmen koncentreras i verktygseggen, och materialet härdnar vid deformation. Resultatet blir snabbt verktygsslitage och risk för vibration. Det kräver rätt skärdata, stabil fixturering och riklig kylning — och därmed erfarna verkstäder.",
+    },
+    {
+      q: "Vilka titanlegeringar är vanligast?",
+      a: "Grade 2 (kommersiellt ren titan) för korrosionstålighet, Grade 5 (Ti-6Al-4V) som arbetshäst inom flyg och försvar, samt Grade 23 (Ti-6Al-4V ELI) med extra låg föroreningshalt för medicinska implantat. Legeringsvalet styr både bearbetning och tillämpning.",
+    },
+    {
+      q: "Vad används titanbearbetning till?",
+      a: "Främst flyg, försvar och medicinteknik — titan är starkt, lätt, korrosionståligt och biokompatibelt. Just dessa branscher ställer ofta krav på AS9100 eller ISO 13485, vilket vi filtrerar på i matchningen så att certifieringen finns på plats.",
+    },
+  ],
+
+  "legotillverkning-plast": [
+    {
+      q: "Formsprutning eller skärande bearbetning av plast — vad passar?",
+      a: "Bearbetning av plastblock (fräsning, svarvning) passar prototyper, små serier och stora detaljer utan verktygskostnad. Formsprutning vinner vid höga volymer när verktygsinvesteringen kan fördelas. Samma detalj kan alltså ha helt olika bästa metod beroende på antal.",
+    },
+    {
+      q: "Vilka tekniska plaster är vanligast?",
+      a: "PA (nylon) och POM (acetal) för slitdelar och mekanik, PC för slagtålighet och transparens, PP och PE för kemisk beständighet, samt högpresterande PEEK och PTFE där temperatur och kemikalier ställer extrema krav. Materialvalet styr både process och leverantörsval.",
+    },
+    {
+      q: "Vilken plast tål höga temperaturer och kemikalier?",
+      a: "PEEK klarar kontinuerlig drift kring 250 °C med god mekanisk hållfasthet, och PTFE (teflon) är närmast kemiskt inert och tål höga temperaturer men är mjukare. Båda är dyrare och kräver leverantörer med specifik erfarenhet — ange materialet i förfrågan så matchas ni rätt.",
+    },
+  ],
+
+  "kompositmaterial": [
+    {
+      q: "Vad är skillnaden mellan kolfiber och glasfiber?",
+      a: "Kolfiber ger högre styvhet och styrka per vikt men är dyrare, medan glasfiber är billigare och tåligare mot slag och används där kostnad väger tyngre än vikt. Aramid (Kevlar) förekommer där slagtålighet är avgörande. Valet styrs av lastfall, viktkrav och budget.",
+    },
+    {
+      q: "Vilka tillverkningsprocesser finns för kompositer?",
+      a: "Från manuell laminering (låg volym, enkla verktyg) till vakuuminfusion, prepreg med autoklavhärdning (högsta kvalitet, flyg) och RTM för serier. Processvalet påverkar fibervolym, ytkvalitet och pris — vi matchar på både material och rätt process.",
+    },
+    {
+      q: "Var används kompositer mest?",
+      a: "Vindkraft (rotorblad), flyg och försvar, marin industri samt lättviktskonstruktioner i fordon. Efterfrågan växer snabbt, särskilt driven av vindkraftsutbyggnaden — vilket gör kapabla kompositleverantörer till en eftertraktad resurs.",
+    },
+  ],
+
+  // ─── Regioner ───────────────────────────────────────────────
+
+  "legotillverkare-goteborg": [
+    {
+      q: "Varför finns så många legotillverkare i Göteborgsregionen?",
+      a: "Västra Götaland är Sveriges tätaste industriregion, formad av fordonsindustrin (Volvo Cars, Volvo Group), marin industri och storföretag som SKF. Det har byggt upp ett djupt nät av precisionsverkstäder och underleverantörer runt Göteborg, Trollhättan och Borås.",
+    },
+    {
+      q: "Kan jag hitta verkstäder vana vid fordonskrav?",
+      a: "Ja — regionen har en av Europas tätaste ansamlingar av fordonsleverantörer, många vana vid Volvo- och SKF-krav på dokumentation och leveransprecision. Vi matchar mot sådana verkstäder utan att ni behöver gå via OEM:ernas inköpsavdelningar.",
+    },
+    {
+      q: "Hur begränsar jag matchningen till Göteborgsområdet?",
+      a: "I förfrågan kan ni ange Västra Götalands län som geografiskt krav, så matchas ni enbart mot leverantörer i regionen. Utan begränsning matchar vi i hela landet — ibland ger det bättre pris eller kortare ledtid än en rent lokal sökning.",
+    },
+  ],
+
+  "legotillverkare-stockholm": [
+    {
+      q: "Vilka branscher präglar tillverkningen i Stockholm–Mälardalen?",
+      a: "Regionen koncentrerar försvarsindustri (Saab), medicinteknik och energiteknik med ABB och Hitachi Energy i Västerås. Det har skapat ett nät av precisionsleverantörer vana vid höga krav på kvalitet och spårbarhet.",
+    },
+    {
+      q: "Finns det certifierade leverantörer för försvar och medtech i regionen?",
+      a: "Ja — Mälardalen har en förhållandevis hög koncentration av AS9100- och ISO 13485-certifierade verkstäder tack vare närheten till försvars- och medicinteknikkunder. Ange certifieringskravet i förfrågan så filtreras matchningen därefter.",
+    },
+    {
+      q: "Vilket område täcker ni i Mälardalen?",
+      a: "Stockholm, Uppsala, Västerås, Eskilstuna och Södertälje med omnejd. Vårt geografiska filter arbetar på länsnivå, så ni kan rikta förfrågan mot ett eller flera län.",
+    },
+  ],
+
+  "legotillverkare-skane": [
+    {
+      q: "Vad kännetecknar Skånes tillverkningsindustri?",
+      a: "Skåne är diversifierat snarare än dominerat av en enskild industri — starka kluster finns inom livsmedelsteknik, medicinteknik, förpackning och precisionstillverkning, med företag som Alfa Laval i Lund som draglok. Bredden gör att rätt specialisering kräver mer än en enkel sökning.",
+    },
+    {
+      q: "Vilken fördel ger Skånes läge?",
+      a: "Närheten till kontinenten via Öresundsbron gör Skåne till ett naturligt nav för leverantörer med europeiska kunder, ofta vana vid internationella kvalitetskrav och korta transporter söderut.",
+    },
+    {
+      q: "Täcker ni hela Skåne?",
+      a: "Ja — Malmö, Lund, Helsingborg, Kristianstad och Landskrona med omnejd. Ange Skåne län som geografiskt krav i förfrågan, eller låt oss matcha i hela landet och jämför.",
+    },
+  ],
+
+  "legotillverkare-blekinge": [
+    {
+      q: "Vad präglar leverantörsnätverket i Blekinge?",
+      a: "Blekinge är litet men industriellt tungt, format av Saab Kockums ubåtsproduktion i Karlskrona och marinens närvaro. Det har gett ett leverantörsnät med ovanligt hög kompetens inom precisionstillverkning, specialmaterial och certifierade processer.",
+    },
+    {
+      q: "Varför är dessa leverantörer svåra att hitta?",
+      a: "Många arbetar under sekretess mot försvarskunder och syns sällan i öppna kataloger — nätverket är relationsburet snarare än publikt. Det är precis den typ av dolt utbud vår matchning är byggd för att nå.",
+    },
+    {
+      q: "Vilka orter täcker ni i Blekinge?",
+      a: "Karlskrona, Karlshamn och Ronneby med omgivande industriområden. Ange Blekinge län som geografiskt krav, så matchas ni mot leverantörer i regionen.",
+    },
+  ],
+
+  "legotillverkare-halland": [
+    {
+      q: "Varför är Halland intressant för legotillverkning?",
+      a: "Halland har kompetenta verkstäder med ofta ledig kapacitet och konkurrenskraftiga kostnadsnivåer, men saknar ett digitalt synligt nätverk. Inköpare förbiser regionen trots att kompetensen mäter sig med storstadsregionernas.",
+    },
+    {
+      q: "Vilken logistikfördel har Halland?",
+      a: "Läget på västkusten mellan Göteborg och Malmö ger korta transporter både norrut, söderut och mot kontinenten — attraktivt för just-in-time-leveranser.",
+    },
+    {
+      q: "Vilka orter täcker ni i Halland?",
+      a: "Halmstad, Varberg, Falkenberg och Kungsbacka med omnejd. Ange Hallands län som geografiskt krav i förfrågan, eller matcha brett i hela landet.",
+    },
+  ],
+
+  // ─── Branscher ──────────────────────────────────────────────
+
+  "fordonsindustri": [
+    {
+      q: "Vad är IATF 16949?",
+      a: "IATF 16949 är fordonsindustrins kvalitetsledningsstandard, byggd ovanpå ISO 9001 med branschspecifika tillägg: nollfelsfokus, processtyrning och krav genom hela leverantörskedjan. Den ersätter den tidigare ISO/TS 16949 och krävs ofta för direktleverans till fordons-OEM och Tier 1.",
+    },
+    {
+      q: "Vad innebär PPAP och APQP?",
+      a: "APQP (Advanced Product Quality Planning) är den strukturerade processen för att planera kvalitet inför produktionsstart, och PPAP (Production Part Approval Process) är dokumentationen som visar att leverantören kan tillverka detaljen enligt krav innan serie släpps. Erfarenhet av dessa väger ofta tyngre än timpriset i fordonskedjan.",
+    },
+    {
+      q: "Behöver alla fordonsleverantörer IATF 16949?",
+      a: "Nej — kravet beror på position i kedjan och kundens krav. Direktleverantörer till OEM och Tier 1 behöver oftast IATF 16949, medan leverantörer längre ned kan klara sig med ISO 9001 plus PPAP-erfarenhet. Ange kravet i förfrågan så matchas ni rätt.",
+    },
+  ],
+
+  "medicinteknik": [
+    {
+      q: "Vad är ISO 13485?",
+      a: "ISO 13485 är kvalitetsledningsstandarden för medicintekniska produkter. Den bygger på ISO 9001 men lägger till skärpta krav på riskhantering, spårbarhet, designkontroll och dokumentation anpassade för den regulatoriska miljön kring medicinteknik.",
+    },
+    {
+      q: "Räcker ISO 9001 för medicintekniska komponenter?",
+      a: "Sällan. För komponenter som ingår i en medicinteknisk produkt kräver de flesta tillverkare ISO 13485, eftersom spårbarhet och dokumentation måste uppfylla kraven i EU:s MDR. Ange ISO 13485 som krav i förfrågan så filtreras matchningen.",
+    },
+    {
+      q: "Vad är MDR?",
+      a: "MDR (Medical Device Regulation, EU 2017/745) är EU:s förordning för medicintekniska produkter, tillämpad sedan 2021. Den skärper krav på spårbarhet, klinisk dokumentation och leverantörsstyrning genom hela kedjan — vilket gör leverantörens processer lika viktiga som själva tillverkningen.",
+    },
+  ],
+
+  "energi": [
+    {
+      q: "Vilka certifieringar krävs för komponenter till energisektorn?",
+      a: "Det beror på komponenten: PED (tryckkärlsdirektivet 2014/68/EU) för trycksatta delar, EN 1090 för bärande stål- och aluminiumkonstruktioner och ISO 3834 för svetsning. Vi filtrerar på rätt certifiering i matchningsprocessen utifrån er tillämpning.",
+    },
+    {
+      q: "Vad är EN 1090?",
+      a: "EN 1090 reglerar utförande av bärande stål- och aluminiumkonstruktioner och är en förutsättning för CE-märkning av sådana. För många energi- och infrastrukturkomponenter är den ett grundkrav — sök därför leverantörer med rätt utförandeklass.",
+    },
+    {
+      q: "Vad driver efterfrågan på tillverkning i energisektorn?",
+      a: "Utbyggnaden av vindkraft, vätgasinfrastruktur, stamnät och ny kärnkraft skapar komponentvolymer som överstiger vad befintliga leverantörsrelationer klarar. Inköpsteam behöver snabbt hitta ny, kvalificerad kapacitet — vilket är precis vad matchningen ger.",
     },
   ],
 };
