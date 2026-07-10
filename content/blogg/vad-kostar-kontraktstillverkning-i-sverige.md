@@ -2,7 +2,7 @@
 title: "Vad kostar kontraktstillverkning i Sverige? Prisguide 2026"
 slug: "vad-kostar-kontraktstillverkning-i-sverige"
 description: "En realistisk prisguide för industriell legotillverkning i Sverige — timpriser, rörliga kostnader och vad som driver prisskillnaderna mellan verkstäder."
-publishedAt: "2026-06-01"
+publishedAt: "2026-07-10"
 tags: ["kontraktstillverkning", "prissättning", "legotillverkning", "inköp"]
 ---
 
@@ -89,6 +89,8 @@ Material faktureras vanligtvis utanpå timpriset. Några riktmärken per kg för
 - Aluminium (6082): 40–70 SEK/kg
 - Rostfritt (316L): 80–130 SEK/kg
 - Titan (grade 5): 500–900 SEK/kg
+
+Priserna avser råmaterial köpt i småkvantitet från svensk distributör — kapat och med materialintyg — inte spotpris på råvarumarknaden, som ligger lägre. Metallpriser rör sig dessutom med marknaden, så använd siffrorna som storleksordning snarare än offert.
 
 Materialåtgången vid skärande bearbetning kan vara hög — en detalj i aluminium kan kräva 3–5 gånger sin färdiga vikt i råmaterial.
 

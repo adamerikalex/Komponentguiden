@@ -129,7 +129,7 @@ Each item below has a plain-language explanation of what it is and why it matter
 8. ~~**Tell buyers when their drawing upload fails.**~~ **DONE 2026-07-10 (commit `be51227`)** — upload error captured; submission proceeds (lead kept) with an amber warning in the success card directing the buyer to email the drawing. See ✅ "IntentForm integrity trio".
 9. ~~**Route "Akut" form selections to the /akut page.**~~ **DONE 2026-07-10 (commit `be51227`)** — Akut tidsram now shows a red callout routing to `/akut`. Implemented as flag-and-route (non-blocking); upgrade to a hard block if the GTM "never enter the 48h flow" rule should be enforced strictly. See ✅ "IntentForm integrity trio".
 10. ~~**Marketing consent checkbox + sekretesspolicy update.**~~ **DONE 2026-07-10 (commit `be51227`)** — separate unticked `marketing_consent` opt-in + policy section + migration (run manually in Supabase). See ✅ "IntentForm integrity trio".
-11. **Fact-check the two risky blog posts.** *(from the GTM session)* The price-guide numbers and the AS9100 post's FMV claims are already live and unverified. A wrong number in a price guide is the most damaging content error a sourcing platform can make — buyers benchmark against it, and AI assistants may quote it verbatim with your name attached.
+11. ~~**Fact-check the two risky blog posts.**~~ **DONE 2026-07-10 (commit pending)** — verified via web search. Findings: (a) AS9100 post had a **wrong OASIS URL** (`oasis.sae-international.org` → fixed to `iaqg.org/tools/oasis/`, OASIS moved to the IAQG platform in 2023) and **missed the IA9100 transition** (added a full section: AS9100D still certifiable in 2026, IA9100 rolling out 2026→2027 aligned with ISO 9001:2026). (b) Pricing post had **no hard errors** — material SEK/kg run ~1.5–2× commodity spot, consistent with small-quantity Swedish retail; added a one-line caveat to that effect; hourly rates plausible and already hedged (Swedish timpriser aren't publicly indexed, so not independently verifiable). Both posts' `publishedAt` bumped to 2026-07-10 (also helps de-cluster the all-2026-06-01 corpus). See ✅ section.
 
 **C. Build the matching engine (after the Masterbase access key lands)**
 
@@ -223,8 +223,10 @@ Precise context so a future session can pick up any backlog item without re-deri
 **B10 (marketing consent). — DONE 2026-07-10 (commit `be51227`).**
 - Separate unticked checkbox `#marketing-consent` in section 6 (distinct from NDA); `marketingConsent` in `FormState`, inserted as `marketing_consent`. Column added via `supabase/migrations/20260710_intent_requests_marketing_consent.sql` (run manually in Supabase). `sekretesspolicy/page.tsx` gained a "Marknadsföring och nyhetsbrev" section (legal basis = samtycke, withdrawal via unsubscribe/mail), date → juli 2026.
 
-**B11 (blog fact-check).**
-- `content/blogg/vad-kostar-kontraktstillverkning-i-sverige.md` (price levels, hourly rates) and `content/blogg/as9100-vs-iso-9001-forsvarsupphandlingar.md` (FMV/defense-procurement claims). Verify against current sources via web search; both posts are live. Update `publishedAt` when revised.
+**B11 (blog fact-check). — DONE 2026-07-10.**
+- `as9100-...md`: OASIS link corrected to `https://iaqg.org/tools/oasis/` (was `oasis.sae-international.org`, dead since the 2023 platform move); "nuvarande revision" → "nuvarande certifierbara revision"; new "Vad händer härnäst: övergången till IA9100" section (IA9100 = renamed AS9100, limited release Jan 2026, full alignment with ISO 9001:2026 late 2026, IA9100A early 2027). Rest of the post verified sound (ISO 3834 levels, FMV/SAAB/BAE Hägglunds primes, tier cascade).
+- `vad-kostar-...md`: no factual errors; added a caveat that material SEK/kg are small-quantity retail (cut, MTC, markup), not commodity spot. Hourly rates left as hedged estimates (not publicly verifiable).
+- Both `publishedAt` → 2026-07-10.
 
 **C12–C14 (matching engine, blocked on Masterbase anon key + PR #98 merge).**
 - `matches` table (Komponentguiden Supabase), schema already sketched in CLAUDE.md: `intent_request_id uuid → intent_requests`, `supplier_id` (Masterbase companies.id or org_nr — prefer org_nr, it's the cross-system key per metalbase-strategi.md), `score numeric`, `rank int`, `status text ('pending'|'approved'|'sent')`.
