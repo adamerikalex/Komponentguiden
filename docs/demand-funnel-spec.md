@@ -1,8 +1,10 @@
 # Demand Funnel — spec (buyers side)
 
-*Draft 2026-07-10. Companion to REVIEW-AND-BACKLOG.md item 28. Covers the buyer
+*v1 2026-07-10. Companion to REVIEW-AND-BACKLOG.md item 28. Covers the buyer
 demand funnel only; supply intelligence (lazy twins etc.) is deliberately left to
-Masterbase's Förvärvsradar — see the ownership-boundary note at the end.*
+Masterbase's Förvärvsradar — see the ownership-boundary note at the end. Open
+decisions resolved: email = warn-and-flag (not hard-block); proposal = hosted page,
+60-day validity, no email-gate (see "Proposal page — lifecycle").*
 
 ## Purpose
 
@@ -93,6 +95,34 @@ the lead is auto-qualified on identity.
    automated N-day follow-up email. Only source of "lyckad matchning"; doubles as the
    Masterbase outcome writeback.
 
+## Proposal page — lifecycle
+
+- **One page per *delivered* intent.** Generated only when you approve a match in the
+  admin view (stage 4) — that action creates the page and fires the Resend
+  notification. Intents that never match never get a page.
+- **Tokenized URL, no login.** `/forslag/[token]`, `token` = random nanoid/UUID,
+  never the DB id — so pages can't be guessed or enumerated. Capability-URL security
+  model (à la Stripe/DocuSign); frictionless straight from the email. The page
+  exposes only the buyer's own intent + the suppliers they asked to be matched with.
+  Optional future hardening: an email-gate (enter the submitting email to view) —
+  **not in v1**.
+- **States:** `active` from `sent_at`; `expired` after the validity window. There is
+  no public page before approval.
+- **Validity = 60 days from send** (configurable), mirroring the "offert
+  giltighetstid" norm in the pricing post. After expiry the URL still resolves but
+  renders an "det här förslaget har gått ut — starta en ny matchning" state, not the
+  stale supplier list.
+- **Never hard-deleted on expiry.** Funnel analytics need the history; the row is
+  retained within the 24-month GDPR window the privacy policy already promises, then
+  purged with the rest of the intent data.
+- **Instrumentation (stages 5–7):** page view → `Öppnat` event; per-supplier link
+  clicks → interest signal (which suppliers drew clicks); one-click "Vi tog kontakt"
+  / "Inte relevant" per supplier → `Svarat` / `Utfall`. This is what makes the hosted
+  page beat an inline email.
+- **Data:** `proposal_token`, `proposal_status`, `sent_at`, `expires_at` on
+  `intent_requests` — or a dedicated `proposals` table if re-proposing to the same
+  buyer is ever needed (one-per-intent for MVP).
+
 ## Data artifacts
 
 - `intent_events(intent_id, stage, ts, meta jsonb)` — the backbone.
@@ -102,7 +132,8 @@ the lead is auto-qualified on identity.
 - `matches` table with a **denormalized supplier snapshot** (org_nr, name, key
   financials at match time) so historical funnels/top-lists don't depend on a live
   cross-DB join and stay historically accurate.
-- `/forslag/[token]` proposal page (tokenized, no auth, read-only + feedback).
+- `/forslag/[token]` proposal page + `proposal_token` / `proposal_status` /
+  `sent_at` / `expires_at` (see "Proposal page — lifecycle"; 60-day default validity).
 - Feedback + N-day follow-up mechanism.
 - org.nr→SNI enrichment job (nightly or at insert), graceful "unknown".
 - Resend webhook handler (Edge Function or route handler).
