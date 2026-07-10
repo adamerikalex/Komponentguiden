@@ -24,7 +24,7 @@ export default function SekretesspolicyPage() {
             Sekretesspolicy
           </h1>
           <p style={{ fontSize: "16px", color: "var(--slate-navy-light)", marginTop: "12px" }}>
-            Senast uppdaterad: januari 2026
+            Senast uppdaterad: juli 2026
           </p>
         </div>
       </section>
@@ -83,6 +83,22 @@ export default function SekretesspolicyPage() {
               </li>
             </ul>
 
+            <h2>Marknadsföring och nyhetsbrev</h2>
+            <p>
+              I formuläret kan du frivilligt kryssa i att du vill hållas
+              uppdaterad med relevant information och nyheter från Komponentguiden.
+              Den rutan är förvald som otickad — om du inte aktivt kryssar i den
+              använder vi endast dina kontaktuppgifter för att återkoppla kring din
+              egen förfrågan, inte för nyhetsbrev eller annan marknadsföring.
+            </p>
+            <p>
+              Om du samtycker är den rättsliga grunden ditt samtycke (GDPR art. 6.1
+              a). Du kan när som helst återkalla samtycket genom att avregistrera
+              dig via länken i våra utskick eller mejla oss på
+              info@komponentguiden.se. Ett återkallat samtycke påverkar inte
+              lagligheten av behandling som skedde dessförinnan.
+            </p>
+
             <h2>Delar vi dina uppgifter med tredje part?</h2>
             <p>
               Din förfrågan och dina underlag delas med upp till fem utvalda
@@ -113,7 +129,7 @@ export default function SekretesspolicyPage() {
             <ul>
               <li><strong>Få tillgång</strong> till de uppgifter vi har om dig</li>
               <li><strong>Rätta</strong> felaktiga uppgifter</li>
-              <li><strong>Radera</strong> dina uppgifter ("rätten att bli glömd")</li>
+              <li><strong>Radera</strong> dina uppgifter (”rätten att bli glömd”)</li>
               <li><strong>Begränsa</strong> behandlingen av dina uppgifter</li>
               <li>
                 <strong>Invända</strong> mot behandling som baseras på berättigat

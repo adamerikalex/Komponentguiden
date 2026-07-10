@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import Link from "next/link";
 import { Upload } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import {
@@ -43,6 +44,7 @@ type FormState = {
   timeframe: string;
   regionSlugs: string[];
   ndaAccepted: boolean;
+  marketingConsent: boolean;
 };
 
 const MATERIALS = [
@@ -92,6 +94,7 @@ export default function IntentForm({
     timeframe: "Inom 2–4 veckor",
     regionSlugs: [],
     ndaAccepted: true,
+    marketingConsent: false,
   });
   const [yrkesrollAnnat, setYrkesrollAnnat] = useState(false);
   const [surfaceAnnat, setSurfaceAnnat] = useState(false);
@@ -101,6 +104,9 @@ export default function IntentForm({
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  // B8: set when a drawing was attached but its upload failed — the request is
+  // still submitted (we never drop the lead), but the buyer is told to email it.
+  const [drawingFailed, setDrawingFailed] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -147,6 +153,7 @@ export default function IntentForm({
     e.preventDefault();
     setSubmitting(true);
     setSubmitError(null);
+    setDrawingFailed(false);
 
     if (!form.email) {
       setSubmitError("E-postadress krävs.");
@@ -154,8 +161,11 @@ export default function IntentForm({
       return;
     }
 
-    // Upload drawing if provided — failure is non-blocking
+    // Upload drawing if provided. Failure is non-blocking — we still submit the
+    // request so the lead is never lost — but we capture the error (B8) and tell
+    // the buyer to email the drawing instead of silently dropping it.
     let drawingUrl: string | null = null;
+    let uploadFailed = false;
     if (file) {
       if (file.size > 50 * 1024 * 1024) {
         setSubmitError("Filen är för stor — max 50 MB.");
@@ -163,10 +173,14 @@ export default function IntentForm({
         return;
       }
       const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
-      const { data: uploadData } = await supabase.storage
+      const { data: uploadData, error: uploadError } = await supabase.storage
         .from("drawings")
         .upload(`${Date.now()}-${safeName}`, file);
-      if (uploadData) drawingUrl = uploadData.path;
+      if (uploadData) {
+        drawingUrl = uploadData.path;
+      } else if (uploadError) {
+        uploadFailed = true;
+      }
     }
 
     const surfaceLabels = SURFACE_OPTIONS.filter((o) => form.surfaceSlugs.includes(o.slug))
@@ -191,6 +205,7 @@ export default function IntentForm({
       volume: form.volume || null,
       timeframe: form.timeframe || null,
       nda_accepted: form.ndaAccepted,
+      marketing_consent: form.marketingConsent,
       drawing_url: drawingUrl,
       // Taxonomy slugs (Metalbase docs/taxonomi.md) — the matching engine
       // joins on these; the label fields above are for human readability.
@@ -211,6 +226,7 @@ export default function IntentForm({
     if (error) {
       setSubmitError("Något gick fel. Försök igen eller kontakta oss direkt.");
     } else {
+      setDrawingFailed(uploadFailed);
       setSubmitted(true);
     }
   };
@@ -226,6 +242,30 @@ export default function IntentForm({
               Vi återkommer inom 48 timmar med matchade leverantörer.
               Håll utkik i din inkorg på <strong>{form.email}</strong>.
             </p>
+            {drawingFailed && (
+              <div
+                style={{
+                  maxWidth: "480px",
+                  margin: "24px auto 0",
+                  padding: "16px 20px",
+                  background: "#fff8e6",
+                  border: "1px solid #f0d68a",
+                  borderRadius: "10px",
+                  textAlign: "left",
+                  fontSize: "14px",
+                  color: "var(--slate-navy)",
+                  lineHeight: 1.6,
+                }}
+              >
+                <strong>Obs — din ritning kunde inte laddas upp.</strong> Din
+                förfrågan är mottagen, men filen kom inte fram. Mejla den gärna till{" "}
+                <a href="mailto:info@komponentguiden.se" style={{ color: "var(--indigo)" }}>
+                  info@komponentguiden.se
+                </a>{" "}
+                så kopplar vi den till er förfrågan — en ritning förbättrar
+                träffsäkerheten i matchningen.
+              </div>
+            )}
           </div>
         </div>
       </section>
@@ -432,6 +472,33 @@ export default function IntentForm({
               </div>
             </div>
 
+            {/* B9: urgent needs must not enter the 48h flow — route to /akut. */}
+            {form.timeframe === "Akut / Brandsläckning" && (
+              <div
+                style={{
+                  marginTop: "16px",
+                  padding: "16px 20px",
+                  background: "#fdecec",
+                  border: "1px solid #f3b4b4",
+                  borderRadius: "10px",
+                  fontSize: "14px",
+                  color: "var(--slate-navy)",
+                  lineHeight: 1.6,
+                }}
+              >
+                <strong>Brådskande behov?</strong> Det här formuläret är för
+                planerade förfrågningar med svar inom 48 timmar. Akuta och
+                driftstörande behov hanteras snabbare via vår akutkanal — samma
+                dag, direkt av en människa.{" "}
+                <Link
+                  href="/akut"
+                  style={{ color: "var(--indigo)", fontWeight: 600, whiteSpace: "nowrap" }}
+                >
+                  Till akut behov →
+                </Link>
+              </div>
+            )}
+
             <div style={{ marginTop: "16px" }}>
               <label className="input-label">Geografiskt krav på leverantör</label>
               <div style={{ display: "flex", gap: "10px", alignItems: "flex-start" }}>
@@ -636,6 +703,22 @@ export default function IntentForm({
               />
               <label htmlFor="nda" style={{ fontSize: "13px", color: "var(--slate-navy-light)", lineHeight: 1.6 }}>
                 <strong>Sekretessgodkännande:</strong> Jag godkänner att uppladdat material delas under sekretess med upp till 5 utvalda leverantörer för matchning.
+              </label>
+            </div>
+
+            {/* B10: separate, unticked marketing opt-in — a distinct legal basis
+                from the NDA above. Without it we may only email about this match. */}
+            <div style={{ display: "flex", gap: "12px", alignItems: "flex-start", marginBottom: "24px" }}>
+              <input
+                type="checkbox"
+                id="marketing-consent"
+                checked={form.marketingConsent}
+                onChange={(e) => set("marketingConsent", e.target.checked)}
+                style={{ marginTop: "3px", flexShrink: 0 }}
+              />
+              <label htmlFor="marketing-consent" style={{ fontSize: "13px", color: "var(--slate-navy-light)", lineHeight: 1.6 }}>
+                Håll mig uppdaterad med relevant information och nyheter från
+                Komponentguiden (frivilligt). Du kan när som helst avregistrera dig.
               </label>
             </div>
 
