@@ -1,6 +1,7 @@
 # Komponentguiden — Review & Items Backlog
 *Codebase, design, content, business model, SEO/AI-search, Metalbase integration — plus the categorized backlog (§7)*
 *2026-07-07 · Based on full read of both repos + live site at komponentguiden.vercel.app*
+*Narrative findings (§1–§6) are the original 2026-07-07 snapshot with inline RESOLVED annotations; §7 backlog + Appendix B are kept current (through 2026-07-10).*
 
 ---
 
@@ -8,7 +9,7 @@
 
 The product is in unusually good shape for its stage. The codebase is small, clean, and does exactly what the GTM plan says it should: 20 keyword-targeted category pages, 5 substantive blog posts, a fully wired intent form, and an /akut page that correctly routes urgency to a human instead of the 48h form. The design system is coherent and the copy is confident and professional.
 
-The two biggest problems are not in the code. First: **the site is effectively invisible** — komponentguiden.se is not connected (the domain returns an error page), the site lives on a vercel.app subdomain, has no sitemap, no robots.txt, no structured data, and is not in Google's index. All SEO/content investment is currently earning zero return. Second: **the Metalbase integration is designed but only half landed.** The taxonomy, architecture, and draft migrations exist in an unmerged Masterbase PR (`docs/metalbase-datamall`); nothing is yet applied to the Masterbase live DB. The buyer side was completed 2026-07-07 during this review: the IntentForm now saves taxonomy slugs on every submission (and old rows were backfilled), so intent data is match-ready.
+The two biggest problems are not in the code. First: **the site is effectively invisible** — komponentguiden.se is not connected (the domain returns an error page), the site lives on a vercel.app subdomain, has no sitemap, no robots.txt, no structured data, and is not in Google's index. *(Update: sitemap, robots.txt, canonical/`metadataBase` and structured data have since been added — 2026-07-07 and 2026-07-10; the still-live blockers are the custom domain, the Google index and Search Console.)* All SEO/content investment is currently earning zero return. Second: **the Metalbase integration is designed but only half landed.** The taxonomy, architecture, and draft migrations exist in an unmerged Masterbase PR (`docs/metalbase-datamall`); nothing is yet applied to the Masterbase live DB. The buyer side was completed 2026-07-07 during this review: the IntentForm now saves taxonomy slugs on every submission (and old rows were backfilled), so intent data is match-ready.
 
 ---
 
@@ -19,16 +20,16 @@ The two biggest problems are not in the code. First: **the site is effectively i
 **What undercuts it.**
 
 - **The metrics section actively hurts trust.** *(RESOLVED 2026-07-08, commit `7122738` — SSR now renders real finals, metrics reframed as database facets, "0 matchningar" removed, hero reconciled. Original finding kept below for context.)* Crawlers and any non-JS reader see the scramble start values — "1 000 företag, 10 kartlagda, 0 presenterade matchningar" — not the real 8 860/171. And even the real numbers tell a weak story: "171 kartlagda / 0 matchningar" publicly admits the database is thin and no match has ever been delivered. Meanwhile the hero claims "vi har kartlagt tusentals svenska legotillverkare." That's a direct internal contradiction (171 ≠ tusentals) visible on a single scroll, and precisely the kind of inconsistency an AI answer engine will surface verbatim.
-- **Footer LinkedIn links to `#`.** A dead social link on a trust-driven B2B site is worse than no link.
-- **Blog cards are gradient placeholders** — already on your backlog, worth prioritizing since the blog is a primary SEO asset.
-- **`/about` is the only English route** on an otherwise Swedish-slugged site (GTM plan specified `/om-oss/`). Minor, but fix before indexing, not after.
-- The form's "Tidsram: Akut / Brandsläckning" option quietly contradicts the GTM rule that urgent needs must never enter the 48h flow. Selecting it should redirect or at least interstitial to /akut.
+- **Footer LinkedIn links to `#`.** A dead social link on a trust-driven B2B site is worse than no link. *(RESOLVED 2026-07-10, commit `6ff4df5` — dead link removed until the LinkedIn page exists; item 17.)*
+- **Blog cards are gradient placeholders** — already on your backlog, worth prioritizing since the blog is a primary SEO asset. *(Still open — item 22.)*
+- **`/about` is the only English route** on an otherwise Swedish-slugged site (GTM plan specified `/om-oss/`). Minor, but fix before indexing, not after. *(RESOLVED 2026-07-10, commit `6942478` — renamed to `/om-oss` + permanent redirect; item 18.)*
+- The form's "Tidsram: Akut / Brandsläckning" option quietly contradicts the GTM rule that urgent needs must never enter the 48h flow. Selecting it should redirect or at least interstitial to /akut. *(RESOLVED 2026-07-10, commit `be51227` — selecting Akut now surfaces a callout routing to /akut; item 9/B9.)*
 
 ## 2. Content
 
 The five blog posts map one-to-one onto the GTM plan's prioritized topics, at ~800–930 words each — real content, not filler, targeting the right funnel stages (broad research query → price guide → technical comparison → procurement checklist → defense/AS9100 niche). The 20 category pages have genuinely differentiated copy; the Småland page referencing Gnosjöandan is exactly the kind of local-knowledge signal that both buyers and language models reward.
 
-Gaps: no author bylines or publish/update dates in metadata (E-E-A-T), no FAQ sections anywhere (the single highest-leverage format for AI search citation), and blog posts don't consistently link to their sibling category pages as the GTM plan requires. Content cadence also matters: everything is dated 2026-06-01; a site whose entire corpus shares one date looks generated. Stagger and keep publishing 1–2/month.
+Gaps: no author bylines or publish/update dates in metadata (E-E-A-T), no FAQ sections anywhere (the single highest-leverage format for AI search citation), and blog posts don't consistently link to their sibling category pages as the GTM plan requires. *(RESOLVED 2026-07-10: FAQ blocks now on all 20 category pages (commits `4add617`/`f373391`); blog bylines + visible dates added and every post links to a sibling category page (commit `6942478`); AS9100 + pricing posts re-dated to 2026-07-10 when fact-checked. The 1–2 posts/month cadence point still stands.)* Content cadence also matters: everything is dated 2026-06-01; a site whose entire corpus shares one date looks generated. Stagger and keep publishing 1–2/month.
 
 ## 3. Business model
 
@@ -48,15 +49,15 @@ Everything CLAUDE.md marks as done **is** done and works as described: all route
 Findings that need attention:
 
 1. **IntentForm ≠ taxonomy.** ~~The form submits raw labels only.~~ **Resolved 2026-07-07:** the form now maps selections to `capability_slugs`/`material_slugs`/`cert_slugs` at insert (`src/lib/taxonomy.ts`), columns + GIN indexes added, existing rows backfilled.
-2. **No region/location field in the form.** Matching is defined as "slugs ∩ region ∩ size," and six landing pages sell regional matching — but the form never asks where the buyer is or where delivery must happen. Org-nr can proxy HQ location, but not delivery site.
-3. **Silent drawing loss.** If the Storage upload fails, submission proceeds with `drawing_url: null` and the buyer is never told their ritning didn't attach. For a product whose accuracy pitch is "ladda upp ritning," this should at minimum warn.
-4. **NDA checkbox is pre-checked.** Pre-ticked consent is both a GDPR anti-pattern and a signal-quality loss (you can't distinguish deliberate acceptance).
-5. **No spam defense** on a public anon-INSERT table — no honeypot, no rate limit. Fine today, painful the week a bot finds the form.
+2. **No region/location field in the form.** Matching is defined as "slugs ∩ region ∩ size," and six landing pages sell regional matching — but the form never asks where the buyer is or where delivery must happen. Org-nr can proxy HQ location, but not delivery site. **RESOLVED:** region field shipped in IntentForm v2 (commit `ef27d71`) — `region_slugs text[]`, län-level, delivery-oriented; item 7/B7.
+3. **Silent drawing loss.** If the Storage upload fails, submission proceeds with `drawing_url: null` and the buyer is never told their ritning didn't attach. For a product whose accuracy pitch is "ladda upp ritning," this should at minimum warn. **RESOLVED 2026-07-10 (commit `be51227`):** upload errors captured; success card warns the buyer to email the drawing; item 8/B8.
+4. **NDA checkbox is pre-checked.** Pre-ticked consent is both a GDPR anti-pattern and a signal-quality loss (you can't distinguish deliberate acceptance). **RESOLVED 2026-07-10 (commit `6942478`):** NDA now starts unchecked and is required before submit; item 20.
+5. **No spam defense** on a public anon-INSERT table — no honeypot, no rate limit. Fine today, painful the week a bot finds the form. **PARTIALLY RESOLVED 2026-07-10 (commit `6942478`):** honeypot added; rate-limiting still open; item 20.
 6. **Doc drift:** CLAUDE.md says `content/posts/`; reality is `content/blogg/`. CLAUDE.md references `docs/taxonomi.md` and `docs/metalbase-strategi.md` in Masterbase — neither file exists (see §6).
 
 ## 5. SEO & AI-search readiness
 
-**Verdict: the on-page foundation is good; the technical layer is almost entirely missing, and the site is not currently discoverable at all.**
+**Verdict: the on-page foundation is good; the technical layer is almost entirely missing, and the site is not currently discoverable at all.** *(Update 2026-07-10: the technical layer is now largely in place — see the ✓/◑ rows below; discoverability now hinges on the still-open domain + Search Console.)*
 
 Verified against the live deployment:
 
@@ -64,10 +65,10 @@ Verified against the live deployment:
 |---|---|
 | Custom domain | ✗ komponentguiden.se not connected (error page); site lives on vercel.app |
 | Google index | ✗ Site absent from search results |
-| sitemap.xml | ✗ Missing (no `app/sitemap.ts`) |
-| robots.txt | ✗ Missing (no `app/robots.ts`) |
-| Canonical URLs / `metadataBase` | ✗ Not set — risk of vercel.app being indexed as the canonical when indexing does start |
-| Structured data (JSON-LD) | ✗ None — no Organization, Service, BlogPosting, FAQPage, BreadcrumbList |
+| sitemap.xml | ✓ Added 2026-07-07 (`app/sitemap.ts`, all ~32 routes) |
+| robots.txt | ✓ Added 2026-07-07 (`app/robots.ts`, AI-search bots allowed) |
+| Canonical URLs / `metadataBase` | ✓ Set 2026-07-07 (`metadataBase` + canonical in `layout.tsx`) |
+| Structured data (JSON-LD) | ◑ Organization + BlogPosting + FAQPage (all 20 pages) added by 2026-07-10; Service + BreadcrumbList still open |
 | Per-page titles/descriptions | ✓ Good — keyword-targeted on all 20 category pages and blog posts |
 | OG/Twitter cards | ✓ Working, but one generic teal image for all pages (and off-brand vs. indigo) |
 | `lang="sv"`, semantic H1s, SSG HTML | ✓ Good — content fully readable without JS |
