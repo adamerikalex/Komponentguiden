@@ -7,7 +7,7 @@ const BASE =
 // PerplexityBot etc. follow the wildcard) — deliberate, per SEO/AI-search strategy.
 export default function robots(): MetadataRoute.Robots {
   return {
-    rules: { userAgent: "*", allow: "/" },
+    rules: { userAgent: "*", allow: "/", disallow: "/admin" },
     sitemap: `${BASE}/sitemap.xml`,
   };
 }
