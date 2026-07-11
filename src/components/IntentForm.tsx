@@ -5,6 +5,12 @@ import Link from "next/link";
 import { Upload } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import {
+  isValidOrgNr,
+  isValidEmail,
+  isCompanyEmail,
+  normalizeOrgNr,
+} from "@/lib/validation";
+import {
   ALL_METHODS,
   UNSURE_METHOD,
   MATERIAL_TO_PRIMARY_METHODS,
@@ -109,6 +115,9 @@ export default function IntentForm({
   // B8: set when a drawing was attached but its upload failed — the request is
   // still submitted (we never drop the lead), but the buyer is told to email it.
   const [drawingFailed, setDrawingFailed] = useState(false);
+  // Inline identity-core validation (demand-funnel v0).
+  const [orgNrError, setOrgNrError] = useState<string | null>(null);
+  const [emailWarning, setEmailWarning] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -165,11 +174,38 @@ export default function IntentForm({
       return;
     }
 
-    if (!form.email) {
-      setSubmitError("E-postadress krävs.");
+    // Identity core is mandatory — validates the intent is real and gives the
+    // funnel something to analyse (docs/demand-funnel-spec.md).
+    const missing =
+      !form.orgNr.trim() ? "Organisationsnummer krävs." :
+      !form.companyName.trim() ? "Företagsnamn krävs." :
+      !form.contactName.trim() ? "Namn krävs." :
+      !form.yrkesroll.trim() ? "Yrkesroll krävs." :
+      !form.email.trim() ? "Företagsmail krävs." :
+      !form.material ? "Välj materialgrupp." :
+      !form.method ? "Välj primär bearbetningsmetod." :
+      null;
+    if (missing) {
+      setSubmitError(missing);
       setSubmitting(false);
       return;
     }
+    if (!isValidEmail(form.email)) {
+      setSubmitError("Ogiltig e-postadress — kontrollera adressen.");
+      setSubmitting(false);
+      return;
+    }
+    if (!isValidOrgNr(form.orgNr)) {
+      setOrgNrError("Ogiltigt organisationsnummer — kontrollera de tio siffrorna.");
+      setSubmitError("Ogiltigt organisationsnummer — kontrollera de tio siffrorna.");
+      setSubmitting(false);
+      return;
+    }
+
+    // Warn-and-flag (not hard-block): free-mail is allowed but marked
+    // low_confidence → the qualifier routes it to needs_review for manual check.
+    const lowConfidence = !isCompanyEmail(form.email);
+    const qualificationStatus = lowConfidence ? "needs_review" : "qualified";
 
     if (!form.ndaAccepted) {
       setSubmitError(
@@ -208,7 +244,7 @@ export default function IntentForm({
       .join(", ");
 
     const { error } = await supabase.from("intent_requests").insert({
-      org_nr: form.orgNr || null,
+      org_nr: normalizeOrgNr(form.orgNr) ?? form.orgNr,
       company_name: form.companyName || null,
       contact_name: form.contactName || null,
       yrkesroll: form.yrkesroll || null,
@@ -224,6 +260,11 @@ export default function IntentForm({
       timeframe: form.timeframe || null,
       nda_accepted: form.ndaAccepted,
       marketing_consent: form.marketingConsent,
+      // Demand-funnel v0: qualification computed client-side; a DB trigger logs
+      // the 'submitted' + qualification events into intent_events.
+      qualification_status: qualificationStatus,
+      low_confidence: lowConfidence,
+      source: "intentform",
       drawing_url: drawingUrl,
       // Taxonomy slugs (Metalbase docs/taxonomi.md) — the matching engine
       // joins on these; the label fields above are for human readability.
@@ -297,6 +338,9 @@ export default function IntentForm({
           <span className="metadata">Kostnadsfri matchning</span>
           <h2>{heading}</h2>
           <p>Berätta om ert behov — vi matchar er mot rätt leverantörer inom 48 timmar.</p>
+          <p style={{ fontSize: "13px", color: "var(--slate-navy-light)", marginTop: "4px" }}>
+            Fält märkta med <strong>*</strong> är obligatoriska.
+          </p>
         </div>
 
         <form className="form-card" onSubmit={handleSubmit}>
@@ -328,7 +372,7 @@ export default function IntentForm({
               style={{ marginBottom: "16px" }}
             />
 
-            <label className="input-label">Materialgrupp</label>
+            <label className="input-label">Materialgrupp *</label>
             <div className="tag-grid">
               {MATERIALS.map((material) => (
                 <label key={material} className="tag-label">
@@ -343,7 +387,7 @@ export default function IntentForm({
               ))}
             </div>
 
-            <label className="input-label field-sublabel">Primär bearbetningsmetod</label>
+            <label className="input-label field-sublabel">Primär bearbetningsmetod *</label>
             <div className="tag-grid">
               {visibleMethods.map((method) => (
                 <label key={method} className="tag-label">
@@ -631,7 +675,7 @@ export default function IntentForm({
 
             <div className="input-row" style={{ marginBottom: "16px" }}>
               <div>
-                <label className="input-label">Företagsnamn</label>
+                <label className="input-label">Företagsnamn *</label>
                 <input
                   type="text"
                   className="input-field"
@@ -641,20 +685,35 @@ export default function IntentForm({
                 />
               </div>
               <div>
-                <label className="input-label">Organisationsnummer</label>
+                <label className="input-label">Organisationsnummer *</label>
                 <input
                   type="text"
                   className="input-field"
                   placeholder="556XXX-XXXX"
                   value={form.orgNr}
-                  onChange={(e) => set("orgNr", e.target.value)}
+                  onChange={(e) => {
+                    set("orgNr", e.target.value);
+                    if (orgNrError) setOrgNrError(null);
+                  }}
+                  onBlur={() =>
+                    setOrgNrError(
+                      form.orgNr && !isValidOrgNr(form.orgNr)
+                        ? "Ogiltigt organisationsnummer — kontrollera de tio siffrorna."
+                        : null
+                    )
+                  }
                 />
+                {orgNrError && (
+                  <p style={{ color: "#e53e3e", fontSize: "12.5px", marginTop: "6px", lineHeight: 1.5 }}>
+                    {orgNrError}
+                  </p>
+                )}
               </div>
             </div>
 
             <div className="input-row" style={{ marginBottom: "16px" }}>
               <div>
-                <label className="input-label">Namn</label>
+                <label className="input-label">Namn *</label>
                 <input
                   type="text"
                   className="input-field"
@@ -664,7 +723,7 @@ export default function IntentForm({
                 />
               </div>
               <div>
-                <label className="input-label">Yrkesroll</label>
+                <label className="input-label">Yrkesroll *</label>
                 <select
                   className="input-field"
                   value={yrkesrollAnnat ? "Annat" : form.yrkesroll}
@@ -700,14 +759,27 @@ export default function IntentForm({
 
             <div className="input-row">
               <div>
-                <label className="input-label">Företagsmail</label>
+                <label className="input-label">Företagsmail *</label>
                 <input
                   type="email"
                   className="input-field"
                   placeholder="namn@foretag.se"
                   value={form.email}
-                  onChange={(e) => set("email", e.target.value)}
+                  onChange={(e) => {
+                    set("email", e.target.value);
+                    if (emailWarning) setEmailWarning(false);
+                  }}
+                  onBlur={() =>
+                    setEmailWarning(
+                      !!form.email && isValidEmail(form.email) && !isCompanyEmail(form.email)
+                    )
+                  }
                 />
+                {emailWarning && (
+                  <p style={{ color: "#b7791f", fontSize: "12.5px", marginTop: "6px", lineHeight: 1.5 }}>
+                    Använd gärna er företagsmejl — en privat adress fördröjer att vi kan verifiera förfrågan.
+                  </p>
+                )}
               </div>
               <div>
                 <label className="input-label">Telefonnummer (frivilligt)</label>
