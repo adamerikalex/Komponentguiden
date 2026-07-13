@@ -80,6 +80,8 @@ One deliberate caveat: with the directory model off the table, you'll never win 
 
 ## 6. Metalbase integration — desired vs. actual
 
+*(Update 2026-07-10: the "actual" below was the 2026-07-07 snapshot. Since then PR #98 is merged and the DB scaffolding is applied — see **§8 Database enablement** for the current state. The narrative below is kept as the original assessment.)*
+
 **Desired (per CLAUDE.md):** shared capability taxonomy (~70 process slugs) defined in Masterbase `docs/taxonomi.md`; supplier side exposed via scoped read-only view `metalbase_public` over `company_capabilities`/`company_certifications`; IntentForm mapping selections to the same slugs; matching = SQL join on slugs ∩ region ∩ size with embeddings as tiebreaker; demand data written back on org_nr (flywheel per `docs/metalbase-strategi.md`).
 
 **Actual (verified 2026-07-07 — including the open PR branch `docs/metalbase-datamall`, not yet merged to main):**
@@ -125,7 +127,7 @@ Each item below has a plain-language explanation of what it is and why it matter
 
 **B. Protect the data and the funnel**
 
-6. **Merge Masterbase PR #98 and apply its database changes.** The shared "dictionary" (taxonomy) and the supplier-side tables the matching engine needs exist only as an unmerged proposal. Until merged and applied, the supplier half of the matching equation doesn't exist.
+6. ~~**Merge Masterbase PR #98 and apply its database changes.**~~ **DONE 2026-07-10** — PR #98 merged; migrations `a`–`d` applied to the live Masterbase DB and promoted to `migrations/` (incl. a new `d` = the scoped `metalbase_public` views + `metalbase_reader` role). Full detail + what remains on that side (populate capabilities, mint the JWT) in **§8 Database enablement**.
 7. ~~**Ask where the buyer is.**~~ **ALREADY DONE — landed in IntentForm v2 (commit `ef27d71`), this item was a stale leftover.** The form has a "Geografiskt krav på leverantör" progressive-disclosure section: `regionSlugs` in form state, 21 län (matching Masterbase `companies.lan` granularity, defined in `src/lib/taxonomy.ts`), stored in `region_slugs text[]` (GIN-indexed, migration `20260707_intent_requests_region_slugs.sql`), sent on insert; empty = hela Sverige. It's delivery-oriented as the matching rule requires. (See also the ✅ IntentForm v2 entry, which already listed this — the must-have copy was never struck.)
 8. ~~**Tell buyers when their drawing upload fails.**~~ **DONE 2026-07-10 (commit `be51227`)** — upload error captured; submission proceeds (lead kept) with an amber warning in the success card directing the buyer to email the drawing. See ✅ "IntentForm integrity trio".
 9. ~~**Route "Akut" form selections to the /akut page.**~~ **DONE 2026-07-10 (commit `be51227`)** — Akut tidsram now shows a red callout routing to `/akut`. Implemented as flag-and-route (non-blocking); upgrade to a hard block if the GTM "never enter the 48h flow" rule should be enforced strictly. See ✅ "IntentForm integrity trio".
@@ -171,6 +173,49 @@ Each item below has a plain-language explanation of what it is and why it matter
     **✅ Demand-funnel v0 COMPLETE (2026-07-10)** — everything on the buyer side buildable *without* the Masterbase key is now live: identity-core form → org.nr checksum → `intent_events` log → auto-qualifier → `/admin` dashboard. Remaining funnel work is all gated on the co-founder's key / creds: the org.nr→company/SNI live lookup (Bolagsverket or Masterbase), the *Matchad*/*Skickat* stages (matching engine), and *Öppnat*/*Svarat*/*Utfall* (Resend + proposal page + feedback loop, = item 25).
 
 **Ongoing habits:** 1–2 blog posts/month (staggered dates — a site where everything is published the same day looks generated); pursue press mentions in Ny Teknik/Verkstadstidningen (backlinks are your main ranking lever since you chose no public directory); Elmia Subcontractor prep; cold-outreach setup per GTM plan (Apollo.io prospect list, LinkedIn sequences); keep CLAUDE.md in sync with reality.
+
+---
+
+## 8. Database enablement (Masterbase / Metalbase — separate repo + DB)
+
+*This tracks the **supply side**, which lives in the co-founder's Masterbase repo (`studio-shields/Masterbase`) + Supabase project (`yvggpetxbfopwhqarebh`) — NOT Komponentguiden. Different repo, different database; migrations applied by hand in the Masterbase SQL editor. Komponentguiden only ever reads a scoped subset through a key. Kept here (in Komponentguiden's backlog) so the whole picture is in one place.*
+
+### ✅ Done (2026-07-10)
+
+- **PR #98 merged to `main`** — taxonomy docs (`taxonomi.md`, `arkitektur.md`, `metalbase-strategi.md`, `sni-universum.md`, `datamall-metalbase.md`, `berikning-runbook.md`) + the draft migrations.
+- **Migrations `a`–`d` applied to the live Masterbase DB, then promoted `migrations-utkast/` → `migrations/`:**
+  - **`a` (taxonomi_satelliter):** satellite tables `capabilities`, `cert_types`, `company_capabilities`, `company_certifications`, `company_events` + seed (~70 capability slugs across 8 groups, 11 cert types). RLS on, no anon.
+  - **`b` (metalbase_vyer):** `metalbase_sni` lookup (+seed, RLS on) + the `metalbase` universe view (industrial SNI ∩ active ∩ legal-form ∩ size-floor), `enrichment_queue`, `coverage` matview. **Bug fixed:** the `sni_alla` match was broken — values are dotted + space-separated (`70.200 71.121`), seeds undotted — now splits on whitespace, strips dots, exact-matches. `omsattning_senaste` verified to be in kronor (5 MSEK floor correct).
+  - **`c` (utdelning_kreditbetyg):** adds `utdelning`/`utdelning_source` to the **shared** `financial_history` (additive, nullable — the ONLY piece touching shared infra, so coordinate) + `kreditbetyg`/`kreditbetyg_uppdaterad` on `companies`. This is M&A/enrichment-track data (sell-signal + creditworthiness), NOT used by matching; empty until allabolag enrichment fills it.
+  - **`d` (metalbase_public):** the scoped read-only views Komponentguiden reads — `metalbase_public` (org_nr, namn, lan, postnummer, adress, rounded lat/long, derived `storleksklass` + `stabilitetsklass` bands, hemsida, tier — NO economy/scores/contacts) + `company_capabilities_public` + `company_certifications_public`, keyed on org_nr. Access via a dedicated `metalbase_reader` role (granted to `authenticator`); anon fallback left commented. *(Correction vs förslag: `companies` has no `postort` → used `postnummer`.)*
+- **Universe measured:** raw industrial-SNI companies = **9 493**; passing the size floor (≥5 anställda / ≥5 MSEK oms.) = **463**. So ~9 000 real manufacturers are excluded purely for **missing employee/revenue data** — an enrichment opportunity, not a universe limit. The floor is a deliberately conservative, adjustable parameter.
+
+### ⬜ Remaining (Masterbase side)
+
+1. **Populate `company_capabilities`** via the `enrich-capabilities` pipeline (scrape sites + AI-analyse maskinpark/certs). Nothing to match on until this runs. The same allabolag-enrichment update (`/api/import-allabolag`, berikning-runbook step 2) also fills `c`'s utdelning/kreditbetyg and the missing employee/revenue that gate the 9 000.
+2. **Mint the `metalbase_reader` JWT** (Supabase → JWT, `role: metalbase_reader`) — THIS is the key handed to Komponentguiden (→ `MASTERBASE_READER_JWT` env), never the anon or service key.
+3. **Grow the universe:** enrich employee/revenue so more of the 9 493 clear the floor; optionally lower the floor (it's parameterisable).
+4. **Refresh `coverage`** matview after enrichment batches (`refresh materialized view coverage;`).
+5. *Cosmetic:* strip the stale "UTKAST — flytta…" headers from the four moved migration files.
+6. *(Separate M&A track, not matching:* the förvärvsradar / lazy-twins enrichment that consumes `c`'s dividend + credit signals — the co-founder's investment thesis.)*
+
+## 9. Accounts & external services
+
+*What must be set up to run the full flow end-to-end. Status 2026-07-10.*
+
+| Service | Purpose | Status |
+|---|---|---|
+| **Vercel** | Komponentguiden hosting / deploy | ✅ in use |
+| **Supabase (Komponentguiden)** | app DB, storage, `/admin` data | ✅ in use |
+| **Supabase (Masterbase)** | supply DB — read via `metalbase_reader` JWT | ✅ access granted; JWT pending (§8) |
+| **GitHub** | both repos | ✅ collaborator on both |
+| **Domain registrar** | buy **komponentguiden.se** | ⬜ not purchased — blocks SEO indexing + branded email deliverability (must-have #1) |
+| **Resend** | transactional email (proposal sends + open/click webhooks) | ⬜ account + domain-DNS verification pending |
+| **Mailbox** (Google Workspace / M365 / Zoho / …) | human inbox at info@ | ⬜ optional-but-wanted; NOT required for the automated flow |
+| **Google Search Console** | SEO indexing/monitoring (free, needs a Google acct) | ⬜ pending domain (must-have #2) |
+| **Bolagsverket API** | org.nr → company/SNI live lookup + verify | ⬜ co-founder has creds for Masterbase; reuse later for buyer-side lookup |
+
+Minimum to ship the proposal/email flow: **domain registrar + Resend**. Search Console + mailbox are parallel. Bolagsverket is for the later org.nr autofill (item 28 / demand-funnel spec). The matching engine additionally needs the `metalbase_reader` JWT (§8) + populated capabilities.
 
 ---
 
