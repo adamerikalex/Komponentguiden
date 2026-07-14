@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { getAdminClient } from "@/lib/supabaseAdmin";
 import { LAN_GROUPS } from "@/lib/taxonomy";
 
@@ -212,7 +213,9 @@ export default async function AdminDashboard({
                 {intents.slice(0, 25).map((i) => (
                   <tr key={i.id} style={{ color: NAVY }}>
                     <td style={{ padding: "10px 20px", borderBottom: `1px solid ${BORDER}`, whiteSpace: "nowrap" }}>{new Date(i.created_at).toLocaleDateString("sv-SE")}</td>
-                    <td style={{ padding: "10px 20px", borderBottom: `1px solid ${BORDER}` }}>{i.company_name ?? "—"}</td>
+                    <td style={{ padding: "10px 20px", borderBottom: `1px solid ${BORDER}` }}>
+                      <Link href={`/admin/${i.id}`} style={{ color: INDIGO }}>{i.company_name ?? "—"}</Link>
+                    </td>
                     <td style={{ padding: "10px 20px", borderBottom: `1px solid ${BORDER}`, whiteSpace: "nowrap" }}>{i.org_nr ?? "—"}</td>
                     <td style={{ padding: "10px 20px", borderBottom: `1px solid ${BORDER}` }}>{i.method ?? "—"}</td>
                     <td style={{ padding: "10px 20px", borderBottom: `1px solid ${BORDER}` }}>{i.material ?? "—"}</td>
