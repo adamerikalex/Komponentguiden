@@ -9,7 +9,7 @@
 
 The product is in unusually good shape for its stage. The codebase is small, clean, and does exactly what the GTM plan says it should: 20 keyword-targeted category pages, 5 substantive blog posts, a fully wired intent form, and an /akut page that correctly routes urgency to a human instead of the 48h form. The design system is coherent and the copy is confident and professional.
 
-The two biggest problems are not in the code. First: **the site is effectively invisible** — komponentguiden.se is not connected (the domain returns an error page), the site lives on a vercel.app subdomain, has no sitemap, no robots.txt, no structured data, and is not in Google's index. *(Update: sitemap, robots.txt, canonical/`metadataBase` and structured data have since been added — 2026-07-07 and 2026-07-10; the still-live blockers are the custom domain, the Google index and Search Console.)* All SEO/content investment is currently earning zero return. Second: **the Metalbase integration is designed but only half landed.** The taxonomy, architecture, and draft migrations exist in an unmerged Masterbase PR (`docs/metalbase-datamall`); nothing is yet applied to the Masterbase live DB. The buyer side was completed 2026-07-07 during this review: the IntentForm now saves taxonomy slugs on every submission (and old rows were backfilled), so intent data is match-ready.
+The two biggest problems are not in the code. First: **the site is effectively invisible** — komponentguiden.se is not connected (the domain returns an error page), the site lives on a vercel.app subdomain, has no sitemap, no robots.txt, no structured data, and is not in Google's index. *(Update: sitemap, robots.txt, canonical/`metadataBase` and structured data added 2026-07-07/07-10; and **the site is now LIVE on komponentguiden.se with Search Console verified + sitemap submitted (2026-07-14)** — the "invisible" problem is essentially resolved; Google indexing is now pending, days-to-weeks for a fresh domain. See §5 + must-have A1/A2.)* All SEO/content investment is currently earning zero return. Second: **the Metalbase integration is designed but only half landed.** The taxonomy, architecture, and draft migrations exist in an unmerged Masterbase PR (`docs/metalbase-datamall`); nothing is yet applied to the Masterbase live DB. The buyer side was completed 2026-07-07 during this review: the IntentForm now saves taxonomy slugs on every submission (and old rows were backfilled), so intent data is match-ready.
 
 ---
 
@@ -63,8 +63,8 @@ Verified against the live deployment:
 
 | Layer | Status |
 |---|---|
-| Custom domain | ✗ komponentguiden.se not connected (error page); site lives on vercel.app |
-| Google index | ✗ Site absent from search results |
+| Custom domain | ✓ komponentguiden.se LIVE 2026-07-14 (Vercel nameservers; apex canonical) |
+| Google index | ◑ Sitemap submitted 2026-07-14; indexing pending (days-to-weeks for a fresh domain) |
 | sitemap.xml | ✓ Added 2026-07-07 (`app/sitemap.ts`, all ~32 routes) |
 | robots.txt | ✓ Added 2026-07-07 (`app/robots.ts`, AI-search bots allowed) |
 | Canonical URLs / `metadataBase` | ✓ Set 2026-07-07 (`metadataBase` + canonical in `layout.tsx`) |
@@ -72,7 +72,7 @@ Verified against the live deployment:
 | Per-page titles/descriptions | ✓ Good — keyword-targeted on all 20 category pages and blog posts |
 | OG/Twitter cards | ✓ Working, but one generic teal image for all pages (and off-brand vs. indigo) |
 | `lang="sv"`, semantic H1s, SSG HTML | ✓ Good — content fully readable without JS |
-| Search Console | ✗ No evidence of setup (GTM plan action #5) |
+| Search Console | ✓ Verified (DNS TXT) + sitemap submitted 2026-07-14 |
 
 **For AI search specifically** (ChatGPT, Perplexity, Claude, Google AI Overviews): the fundamentals are better than most sites — static HTML, clean heading hierarchy, definitional content in the blog. What's missing is what makes a site *citable*: structured data, FAQ-formatted Q&A blocks ("Vad kostar CNC-bearbetning i Sverige?" with a direct answer), named authors, an About page with verifiable facts (org.nr, address, founders), and consistent numbers (the 171-vs-tusentals contradiction is exactly what an LLM will flag or repeat). Since answer engines lean heavily on entity establishment: get the company into Bolagsverket-linked directories, LinkedIn, and at least one Ny Teknik/Verkstadstidningen mention — those are the sources LLMs retrieve when asked "hur hittar man legotillverkare i Sverige?"
 
@@ -121,8 +121,8 @@ Each item below has a plain-language explanation of what it is and why it matter
 
 **A. Make the site findable (the "visibility layer") — nothing else pays off until this is done**
 
-1. **Buy komponentguiden.se — then two 5-minute steps** (owner, no code needed): (a) connect the domain in Vercel (Domains tab; pick www or apex, 301 the other), (b) set `NEXT_PUBLIC_SITE_URL=https://komponentguiden.se` in Vercel → Settings → Environment Variables (Production) and redeploy — sitemap, robots and canonicals all switch to the new domain automatically. Google treats a real domain as the identity of your business, and needs weeks-to-months to build trust in a new one — this starts the clock.
-2. **Register with Google Search Console** (search.google.com/search-console, ~10 min, owner) **and submit the sitemap URL** (`/sitemap.xml`). Free tool showing whether pages are indexed, what people searched for, and where you rank — the instrument panel for the GTM plan's SEO channel. Redo/re-verify for komponentguiden.se once the domain is live.
+1. ~~**Buy komponentguiden.se — then connect + set NEXT_PUBLIC_SITE_URL.**~~ **DONE 2026-07-14.** Domain registered at Loopia; nameservers pointed to Vercel (`ns1/ns2.vercel-dns.com`, DNSSEC disabled at Loopia first to avoid breakage); **apex** chosen as canonical (www redirect left off, matches the code); `NEXT_PUBLIC_SITE_URL=https://komponentguiden.se` set in Vercel + redeployed. Verified live: sitemap, robots and canonicals all now emit `https://komponentguiden.se`. The trust clock has started.
+2. ~~**Register with Google Search Console + submit the sitemap.**~~ **DONE 2026-07-14.** Domain property for komponentguiden.se verified via DNS TXT (`google-site-verification=…`, added as a TXT record in Vercel DNS — must not be deleted), and `sitemap.xml` submitted. Indexing now pending (days-to-weeks for a fresh domain — expected).
 3. ~~**Fix the numbers story.**~~ **DONE 2026-07-08 (commit `7122738`)** — see the ✅ "Metrics section reframed" entry above. SSR now renders real finals, the three metrics are reframed as database facets (8860 / 171 / "Registrerade maskintyper"), the "0 presenterade matchningar" metric is gone, and the hero's "tusentals" vs 171 contradiction is reconciled ("kartlagt tusentals" → 8860; "analyserar löpande" → the growing 171). *Residual:* third metric shows placeholder `1240` pending live DB counts (item 21).
 
 **B. Protect the data and the funnel**
@@ -172,6 +172,8 @@ Each item below has a plain-language explanation of what it is and why it matter
 
     **✅ Demand-funnel v0 COMPLETE (2026-07-10)** — everything on the buyer side buildable *without* the Masterbase key is now live: identity-core form → org.nr checksum → `intent_events` log → auto-qualifier → `/admin` dashboard. Remaining funnel work is all gated on the co-founder's key / creds: the org.nr→company/SNI live lookup (Bolagsverket or Masterbase), the *Matchad*/*Skickat* stages (matching engine), and *Öppnat*/*Svarat*/*Utfall* (Resend + proposal page + feedback loop, = item 25).
 
+    **Proposal flow scaffolding (2026-07-14, commit `0701f00`) — updates the above:** the proposal page + feedback loop are now BUILT and are *not* gated on the Masterbase key (only the *automatic* matching is). `matches` table + proposal fields on `intent_requests` (migration run); `/admin/[id]` per-intent page to add up to 5 manual suppliers + generate a tokenized proposal link (logs *Matchad* + *Förslag skickat*); public `/forslag/[token]` page rendering the 5 suppliers with "Vi tog kontakt / Inte relevant" feedback (logs *Öppnat* + *Svarat*), 60-day expiry, invalid/expired states, robots-disallowed. Service-role reads/writes; `/admin` behind Basic-Auth, `/forslag` public (token = access control). **Email send STUBBED** — admin copies the link and emails it manually until Resend is wired (§9). Net: a real match can be delivered end-to-end *by hand* today, lighting up funnel stages Matchad→Svarat.
+
 **Ongoing habits:** 1–2 blog posts/month (staggered dates — a site where everything is published the same day looks generated); pursue press mentions in Ny Teknik/Verkstadstidningen (backlinks are your main ranking lever since you chose no public directory); Elmia Subcontractor prep; cold-outreach setup per GTM plan (Apollo.io prospect list, LinkedIn sequences); keep CLAUDE.md in sync with reality.
 
 ---
@@ -209,10 +211,10 @@ Each item below has a plain-language explanation of what it is and why it matter
 | **Supabase (Komponentguiden)** | app DB, storage, `/admin` data | ✅ in use |
 | **Supabase (Masterbase)** | supply DB — read via `metalbase_reader` JWT | ✅ access granted; JWT pending (§8) |
 | **GitHub** | both repos | ✅ collaborator on both |
-| **Domain registrar** | buy **komponentguiden.se** | ⬜ not purchased — blocks SEO indexing + branded email deliverability (must-have #1) |
-| **Resend** | transactional email (proposal sends + open/click webhooks) | ⬜ account + domain-DNS verification pending |
+| **Domain registrar** (Loopia) | **komponentguiden.se** | ✅ live 2026-07-14 (DNS via Vercel nameservers; apex canonical; DNSSEC off) |
+| **Resend** | transactional email (proposal sends + open/click webhooks) | ⬜ **the remaining foundation** — create account, add DKIM/SPF DNS in Vercel, get API key, then wire into `sendProposal` |
 | **Mailbox** (Google Workspace / M365 / Zoho / …) | human inbox at info@ | ⬜ optional-but-wanted; NOT required for the automated flow |
-| **Google Search Console** | SEO indexing/monitoring (free, needs a Google acct) | ⬜ pending domain (must-have #2) |
+| **Google Search Console** | SEO indexing/monitoring | ✅ verified (DNS TXT) + sitemap submitted 2026-07-14 |
 | **Bolagsverket API** | org.nr → company/SNI live lookup + verify | ⬜ co-founder has creds for Masterbase; reuse later for buyer-side lookup |
 
 Minimum to ship the proposal/email flow: **domain registrar + Resend**. Search Console + mailbox are parallel. Bolagsverket is for the later org.nr autofill (item 28 / demand-funnel spec). The matching engine additionally needs the `metalbase_reader` JWT (§8) + populated capabilities.
