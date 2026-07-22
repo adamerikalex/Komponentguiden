@@ -130,7 +130,8 @@ export default async function AdminIntentPage({ params }: { params: Promise<{ id
             </div>
             <code style={{ display: "block", background: "var(--canvas, #f4f6f9)", padding: "10px 12px", borderRadius: 8, wordBreak: "break-all" }}>{proposalUrl}</code>
             <p style={{ color: NAVY_LIGHT, fontSize: 13, marginTop: 6 }}>
-              Mejla den här länken till köparen tills automatiskt utskick (Resend) är på plats.
+              Skickas automatiskt till köparen via e-post när förslaget skapas (om Resend är
+              konfigurerad). Länken visas här som referens och manuell reserv.
             </p>
           </div>
         )}

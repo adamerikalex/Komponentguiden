@@ -137,7 +137,7 @@ Each item below has a plain-language explanation of what it is and why it matter
 **C. Build the matching engine (after the Masterbase access key lands)**
 
 12. **The `matches` table and matching function.** The automated piece that takes a buyer request, queries Masterbase for suppliers with overlapping tags, scores them, and stores the top 5 for your review. Everything above (slugs, region field, PR #98) is preparation for this.
-13. **Email notifications + a simple admin page.** You get an email when a request arrives (Resend); an internal page shows pending matches; one click approves and sends the buyer their 5 suppliers. Replaces copy-paste manual work before volume grows.
+13. **Email notifications + a simple admin page.** ~~You get an email when a request arrives (Resend); an internal page shows pending matches; one click approves and sends the buyer their 5 suppliers.~~ **Admin page DONE (§28); email CODE BUILT & dormant 2026-07-22** — `src/lib/email.ts` (fetch-based Resend, no SDK dep, best-effort/never throws), `/api/notify-intent` (Supabase INSERT webhook → alerts Alexander with an `/admin/[id]` link), and `sendProposal` now emails the buyer the proposal link on first send. All skip cleanly until env is set — activation steps in §9 "Resend activation". tsc + eslint clean.
 14. **Populate supplier capabilities.** Run the scraping/AI pipeline that reads company websites and maskinpark data and fills the supplier-side tag tables. The matching engine has nothing to match against until this runs.
 
 ### 🟡 Nice-to-have
@@ -172,7 +172,7 @@ Each item below has a plain-language explanation of what it is and why it matter
 
     **✅ Demand-funnel v0 COMPLETE (2026-07-10)** — everything on the buyer side buildable *without* the Masterbase key is now live: identity-core form → org.nr checksum → `intent_events` log → auto-qualifier → `/admin` dashboard. Remaining funnel work is all gated on the co-founder's key / creds: the org.nr→company/SNI live lookup (Bolagsverket or Masterbase), the *Matchad*/*Skickat* stages (matching engine), and *Öppnat*/*Svarat*/*Utfall* (Resend + proposal page + feedback loop, = item 25).
 
-    **Proposal flow scaffolding (2026-07-14, commit `0701f00`) — updates the above:** the proposal page + feedback loop are now BUILT and are *not* gated on the Masterbase key (only the *automatic* matching is). `matches` table + proposal fields on `intent_requests` (migration run); `/admin/[id]` per-intent page to add up to 5 manual suppliers + generate a tokenized proposal link (logs *Matchad* + *Förslag skickat*); public `/forslag/[token]` page rendering the 5 suppliers with "Vi tog kontakt / Inte relevant" feedback (logs *Öppnat* + *Svarat*), 60-day expiry, invalid/expired states, robots-disallowed. Service-role reads/writes; `/admin` behind Basic-Auth, `/forslag` public (token = access control). **Email send STUBBED** — admin copies the link and emails it manually until Resend is wired (§9) — whose *first* use should be an **intent-notification email** to Alexander on each new *qualified* intent (Supabase webhook → Resend, with a direct `/admin/[id]` link; lower-stakes than buyer email, so it can run even before full domain DKIM). Net: a real match can be delivered end-to-end *by hand* today, lighting up funnel stages Matchad→Svarat.
+    **Proposal flow scaffolding (2026-07-14, commit `0701f00`) — updates the above:** the proposal page + feedback loop are now BUILT and are *not* gated on the Masterbase key (only the *automatic* matching is). `matches` table + proposal fields on `intent_requests` (migration run); `/admin/[id]` per-intent page to add up to 5 manual suppliers + generate a tokenized proposal link (logs *Matchad* + *Förslag skickat*); public `/forslag/[token]` page rendering the 5 suppliers with "Vi tog kontakt / Inte relevant" feedback (logs *Öppnat* + *Svarat*), 60-day expiry, invalid/expired states, robots-disallowed. Service-role reads/writes; `/admin` behind Basic-Auth, `/forslag` public (token = access control). ~~**Email send STUBBED** — admin copies the link and emails it manually until Resend is wired (§9).~~ **RESEND CODE BUILT & dormant 2026-07-22 (item 13):** the intent-notification email (Supabase INSERT webhook → `/api/notify-intent` → Alexander, with an `/admin/[id]` link) *and* the buyer proposal email (auto-sent from `sendProposal` on first send, link still shown as manual fallback) are implemented and skip cleanly until the 4 env vars + webhook exist (§9 "Resend activation"). Net: a real match can be delivered end-to-end *by hand* today; once Resend is activated, both emails fire automatically — lighting up funnel stages Matchad→Svarat with no manual copy-paste.
 
 **Ongoing habits:** 1–2 blog posts/month (staggered dates — a site where everything is published the same day looks generated); pursue press mentions in Ny Teknik/Verkstadstidningen (backlinks are your main ranking lever since you chose no public directory); Elmia Subcontractor prep; cold-outreach setup per GTM plan (Apollo.io prospect list, LinkedIn sequences); keep CLAUDE.md in sync with reality.
 
@@ -221,12 +221,26 @@ Masterbase already has a rich, partly-automated pipeline — **financials/iXBRL*
 | **Supabase (Masterbase)** | supply DB — read via `metalbase_reader` JWT | ✅ access granted; JWT pending (§8) |
 | **GitHub** | both repos | ✅ collaborator on both |
 | **Domain registrar** (Loopia) | **komponentguiden.se** | ✅ live 2026-07-14 (DNS via Vercel nameservers; apex canonical; DNSSEC off) |
-| **Resend** | transactional email (proposal sends + open/click webhooks) | ⬜ **the remaining foundation** — create account, add DKIM/SPF DNS in Vercel, get API key, then wire into `sendProposal` |
+| **Resend** | transactional email (intent notification + proposal sends) | 🟡 **code BUILT & dormant (2026-07-22)** — `src/lib/email.ts` + `/api/notify-intent` + `sendProposal` wired; activate with the account + 4 env vars + one Supabase webhook (see "Resend activation" below) |
 | **Mailbox** (Google Workspace / M365 / Zoho / …) | human inbox at info@ | ⬜ optional-but-wanted; NOT required for the automated flow |
 | **Google Search Console** | SEO indexing/monitoring | ✅ verified (DNS TXT) + sitemap submitted 2026-07-14 |
 | **Bolagsverket API** | org.nr → company/SNI live lookup + verify | ⬜ co-founder has creds for Masterbase; reuse later for buyer-side lookup |
 
 Minimum to ship the proposal/email flow: **domain registrar + Resend**. Search Console + mailbox are parallel. Bolagsverket is for the later org.nr autofill (item 28 / demand-funnel spec). The matching engine additionally needs the `metalbase_reader` JWT (§8) + populated capabilities.
+
+### Resend activation (code built 2026-07-22 — flip these to go live)
+
+The email code is written and dormant — it *skips cleanly* until the env vars exist, so nothing breaks in the meantime. To activate:
+
+1. **Create a Resend account** and verify the sending domain **komponentguiden.se** (add the DKIM/SPF/Return-Path DNS records Resend shows you into Vercel DNS — same place as the Search Console TXT; never delete that TXT). Until the domain is verified you can test with Resend's `onboarding@resend.dev` sender.
+2. **Set 4 env vars in Vercel** (Production + Preview), then redeploy:
+   - `RESEND_API_KEY` — from the Resend dashboard.
+   - `RESEND_FROM` — e.g. `Komponentguiden <info@komponentguiden.se>` (or `onboarding@resend.dev` while testing).
+   - `ADMIN_NOTIFY_EMAIL` — where the "ny förfrågan" alert goes (Alexander's inbox). Also used as `reply_to` on buyer emails.
+   - `NOTIFY_WEBHOOK_SECRET` — any long random string; must match the webhook header below.
+3. **Create one Supabase Database Webhook** (Komponentguiden project → Database → Webhooks): table `intent_requests`, event **INSERT**, type **HTTP POST**, URL `https://komponentguiden.se/api/notify-intent`, and add an HTTP header `x-notify-secret: <same value as NOTIFY_WEBHOOK_SECRET>`. This is what triggers the "you've got an intent" email.
+
+Once live: every new intent emails Alexander a summary + a direct `/admin/[id]` link; clicking "Skapa förslagslänk" in `/admin/[id]` emails the buyer the tokenized proposal link automatically (the link still shows on the page as a manual fallback). `needs_review` intents get a ⚠ subject so low-confidence leads stand out.
 
 ---
 
