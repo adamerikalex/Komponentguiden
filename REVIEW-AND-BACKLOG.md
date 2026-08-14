@@ -252,7 +252,7 @@ Masterbase already has a rich, partly-automated pipeline — **financials/iXBRL*
 | Service | Purpose | Status |
 |---|---|---|
 | **Vercel** | Komponentguiden hosting / deploy | ✅ in use |
-| **Supabase (Komponentguiden)** | app DB, storage, `/admin` data | ✅ in use |
+| **Supabase (Komponentguiden)** | app DB, storage, `/admin` data | ✅ in use · ⚠️ **verify plan tier + enable backups** — see note below |
 | **Supabase (Masterbase)** | supply DB — read via `metalbase_reader` JWT | ✅ access granted; JWT pending (§8) |
 | **GitHub** | both repos | ✅ collaborator on both |
 | **Domain registrar** (Loopia) | **komponentguiden.se** | ✅ live 2026-07-14 (DNS via Vercel nameservers; apex canonical; DNSSEC off) |
@@ -262,6 +262,25 @@ Masterbase already has a rich, partly-automated pipeline — **financials/iXBRL*
 | **Bolagsverket API** | org.nr → company/SNI live lookup + verify | ⬜ co-founder has creds for Masterbase; reuse later for buyer-side lookup |
 
 Minimum to ship the proposal/email flow: **domain registrar + Resend**. Search Console + mailbox are parallel. Bolagsverket is for the later org.nr autofill (item 28 / demand-funnel spec). The matching engine additionally needs the `metalbase_reader` JWT (§8) + populated capabilities.
+
+### ⚠️ Supabase (Komponentguiden) — plan tier & backups (flagged 2026-08-13)
+
+**Why this is on the list:** on 2026-08-13 a test submission after ~weeks idle hung with no
+confirmation screen. Root cause was **cold-start latency** (the write landed — intent + email
+arrived — but the client round-trip was too slow to render success), not a paused project;
+the dashboard showed **STATUS: Healthy**, compute **NANO**, and crucially **LAST BACKUP: No
+backups**. The IntentForm now degrades gracefully (timeout feedback + try/finally, see the
+IntentForm-robustness note in §7), but two infra risks remain for a **live lead-capture DB**:
+
+1. **Pausing on idle.** If the project is on the **free tier**, Supabase auto-pauses after
+   ~7 days of inactivity — during which the form silently fails and leads are lost. (It did
+   *not* pause here, which suggests it may already be paid — **confirm the plan tier**.)
+2. **No backups.** "LAST BACKUP: No backups" means a mishap = permanent lead-data loss.
+   Pro includes daily backups + PITR.
+
+**Action:** confirm the Supabase plan tier; if free, upgrade **Komponentguiden's** project to
+**Pro** (Masterbase already is) so it never pauses; enable **automated backups** regardless of
+tier. Low effort, removes a real production risk. Owner decision (billing).
 
 ### Resend activation — ✅ DONE & VERIFIED 2026-07-22 (steps kept for reference)
 
