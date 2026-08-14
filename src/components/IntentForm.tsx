@@ -110,6 +110,8 @@ export default function IntentForm({
   const [showAllMethods, setShowAllMethods] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  // Shown after ~8s of a slow submit so a cold/slow backend doesn't look broken.
+  const [slowSubmit, setSlowSubmit] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   // B8: set when a drawing was attached but its upload failed — the request is
@@ -163,6 +165,7 @@ export default function IntentForm({
   const handleSubmit = async (e: { preventDefault(): void }) => {
     e.preventDefault();
     setSubmitting(true);
+    setSlowSubmit(false);
     setSubmitError(null);
     setDrawingFailed(false);
 
@@ -215,15 +218,19 @@ export default function IntentForm({
       return;
     }
 
+    // Feedback for a slow/cold backend: after 8s show a "det tar längre tid" hint
+    // so a cold start (or a resuming DB) doesn't look broken. Cleared in finally.
+    const slowTimer = setTimeout(() => setSlowSubmit(true), 8000);
+
     // Upload drawing if provided. Failure is non-blocking — we still submit the
     // request so the lead is never lost — but we capture the error (B8) and tell
     // the buyer to email the drawing instead of silently dropping it.
     let drawingUrl: string | null = null;
     let uploadFailed = false;
+    try {
     if (file) {
       if (file.size > 50 * 1024 * 1024) {
         setSubmitError("Filen är för stor — max 50 MB.");
-        setSubmitting(false);
         return;
       }
       const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
@@ -280,13 +287,24 @@ export default function IntentForm({
       region_slugs: form.regionSlugs,
     });
 
-    setSubmitting(false);
-
     if (error) {
       setSubmitError("Något gick fel. Försök igen eller kontakta oss direkt.");
     } else {
       setDrawingFailed(uploadFailed);
       setSubmitted(true);
+    }
+    } catch {
+      // Network error / timeout — the write may still have landed (DB webhook +
+      // email), so we don't claim outright failure; we ask them to check before
+      // resending, to avoid creating a duplicate lead.
+      setSubmitError(
+        "Anslutningen tog för lång tid. Din förfrågan kan redan ha registrerats — " +
+        "kontrollera din inkorg om några minuter innan du skickar igen."
+      );
+    } finally {
+      clearTimeout(slowTimer);
+      setSlowSubmit(false);
+      setSubmitting(false);
     }
   };
 
@@ -839,6 +857,11 @@ export default function IntentForm({
             >
               {submitting ? "Skickar…" : "Starta matchning →"}
             </button>
+            {submitting && slowSubmit && (
+              <p style={{ marginTop: "12px", fontSize: "13.5px", color: "var(--slate-navy-light)", textAlign: "center", lineHeight: 1.5 }}>
+                Det tar lite längre tid än vanligt — vänta kvar och stäng inte sidan.
+              </p>
+            )}
           </div>
 
         </form>

@@ -174,6 +174,17 @@ Each item below has a plain-language explanation of what it is and why it matter
 
     **Proposal flow scaffolding (2026-07-14, commit `0701f00`) — updates the above:** the proposal page + feedback loop are now BUILT and are *not* gated on the Masterbase key (only the *automatic* matching is). `matches` table + proposal fields on `intent_requests` (migration run); `/admin/[id]` per-intent page to add up to 5 manual suppliers + generate a tokenized proposal link (logs *Matchad* + *Förslag skickat*); public `/forslag/[token]` page rendering the 5 suppliers with "Vi tog kontakt / Inte relevant" feedback (logs *Öppnat* + *Svarat*), 60-day expiry, invalid/expired states, robots-disallowed. Service-role reads/writes; `/admin` behind Basic-Auth, `/forslag` public (token = access control). ~~**Email send STUBBED** — admin copies the link and emails it manually until Resend is wired (§9).~~ **RESEND LIVE & verified end-to-end 2026-07-22 (item 13):** the intent-notification email (Supabase INSERT webhook → `/api/notify-intent` → Alexander, with an `/admin/[id]` link) *and* the buyer proposal email (auto-sent from `sendProposal` on first send, link still shown as manual fallback) are implemented and skip cleanly until the 4 env vars + webhook exist (§9 "Resend activation"). Net: a real match can be delivered end-to-end *by hand* today; once Resend is activated, both emails fire automatically — lighting up funnel stages Matchad→Svarat with no manual copy-paste.
 
+**IntentForm robustness (2026-08-13, commit pending).** After a cold-start submit hung
+with no confirmation screen (Supabase NANO cold start after weeks idle — the write landed,
+but the client round-trip was too slow to render success), hardened `IntentForm.tsx`
+`handleSubmit`: the upload+insert are now wrapped in `try/catch/finally` so the spinner
+always clears; a `slowSubmit` state shows "det tar lite längre tid än vanligt — vänta kvar"
+after 8s so a slow/cold backend no longer looks broken; and a network-error catch tells the
+buyer their request *may already have registered* (check inbox before resending) rather than
+falsely claiming failure — avoiding duplicate leads. tsc + eslint clean. *Separate infra note:*
+if Komponentguiden's Supabase is free-tier it can pause on idle — consider Pro + backups for
+a live lead DB (LAST BACKUP showed "No backups").
+
 **Ongoing habits:** 1–2 blog posts/month (staggered dates — a site where everything is published the same day looks generated); pursue press mentions in Ny Teknik/Verkstadstidningen (backlinks are your main ranking lever since you chose no public directory); Elmia Subcontractor prep; cold-outreach setup per GTM plan (Apollo.io prospect list, LinkedIn sequences); keep CLAUDE.md in sync with reality.
 
 ---
@@ -191,6 +202,30 @@ Each item below has a plain-language explanation of what it is and why it matter
   - **`c` (utdelning_kreditbetyg):** adds `utdelning`/`utdelning_source` to the **shared** `financial_history` (additive, nullable — the ONLY piece touching shared infra, so coordinate) + `kreditbetyg`/`kreditbetyg_uppdaterad` on `companies`. This is M&A/enrichment-track data (sell-signal + creditworthiness), NOT used by matching; empty until allabolag enrichment fills it.
   - **`d` (metalbase_public):** the scoped read-only views Komponentguiden reads — `metalbase_public` (org_nr, namn, lan, postnummer, adress, rounded lat/long, derived `storleksklass` + `stabilitetsklass` bands, hemsida, tier — NO economy/scores/contacts) + `company_capabilities_public` + `company_certifications_public`, keyed on org_nr. Access via a dedicated `metalbase_reader` role (granted to `authenticator`); anon fallback left commented. *(Correction vs förslag: `companies` has no `postort` → used `postnummer`.)*
 - **Universe measured:** raw industrial-SNI companies = **9 493**; passing the size floor (≥5 anställda / ≥5 MSEK oms.) = **463**. So ~9 000 real manufacturers are excluded purely for **missing employee/revenue data** — an enrichment opportunity, not a universe limit. The floor is a deliberately conservative, adjustable parameter.
+
+### ✅ SNI 2025-avstämning — kritisk kodfix (2026-08-13)
+
+**Fynd:** `companies.sni_kod` är **SNI 2025** (NACE Rev 2.1, infört 8 dec 2025), men
+`metalbase_sni`-seeden var **SNI 2007**. Division 25 och 22 numrerades om — flera koder
+bytte BÅDE nummer OCH betydelse. Störst: **Metallegoarbeten** (kärn-lego) flyttade
+25.62 → **25.53 (25530)**; gamla seeden matchade 79 låstillverkare istället för **3 418**
+legoverkstäder. Universumvyn och scrape-cohorten byggde alltså på fel kodårgång.
+
+**Fix (applicerad live + pushad):**
+- `20260813_metalbase_sni_sni2025_reconcile.sql` — seedar om `metalbase_sni` till SNI 2025
+  för div 22/24/25 (korrekta koder + tiers). Verifierat mot SCB SNI-sök per grupp.
+- `20260813_metalbase_view_25530_floor.sql` — drop+recreate av `metalbase`-vyn + beroenden
+  (`enrichment_queue`, `coverage`, `metalbase_public`) för att flytta golv-undantaget
+  ≥3 anställda från 25620 → 25530.
+- `docs/sni-universum.md` uppdaterad med hela remap-tabellen.
+
+**Effekt:** universumet (aktiva bolag i div 22/24/25) gick **2 647 → 10 423**; med
+årsredovisning **1 167 → 5 393** (varav 96 % parsade); storleksgolvet **467 → 1 719**.
+Detta är den enskilt viktigaste supply-side-fixen hittills.
+
+**Kvarstår:** (1) bekräfta med medgrundare att `companies` är fullt SNI 2025 (ej blandning);
+(2) samma avstämning för div 23/30/32/33 (glasfiber/båt-komposit-kanten); (3) re-exportera
+scrape-cohorten (~1 719 storleksgodkända) och fortsätt skrapa.
 
 ### Pipeline already built (verified 2026-07-15 against the Masterbase repo)
 
