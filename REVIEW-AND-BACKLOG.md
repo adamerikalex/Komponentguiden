@@ -196,7 +196,9 @@ descriptions, privacy policy, alt text on the real images). **Newly built this p
   BreadcrumbList gap noted in §5.
 - **Sticky mobile CTA** (`src/components/StickyMobileCTA.tsx`) — mobile-only bottom bar to the form,
   appears after scrolling past the hero; links to the local `#intent-form` when present, else the
-  homepage form. Added to `layout.tsx`. (Partial mitigation of the ScrollyTelling-mobile gap, item 24.)
+  homepage form, and **hides itself when the form is on screen** (IntersectionObserver) so it never
+  doubles the real submit button. Added to `layout.tsx`. (Partial mitigation of the ScrollyTelling-mobile
+  gap, item 24.)
 - **On-brand OG image** (`src/app/opengraph-image.tsx`) — replaced the generic teal gradient with an
   indigo/slate card (logo + tagline + subline). Closes the "off-brand OG image" note in §5.
 
@@ -212,6 +214,15 @@ tsc + eslint clean. New backlog items from the same review:
 32. **LocalBusiness schema + company location.** Extend the Organization JSON-LD (item 27) with
     address + geo once org.nr/address are public. Low priority — no walk-in business, so "maps +
     directions" from the checklist doesn't really apply.
+33. **Proper logotype / brand mark.** The current logo is a placeholder assembled during the build —
+    a generic lucide `Layers` icon + the "Komponentguiden" wordmark in Inter. It's clean but the icon
+    is widely used and not distinctive, which slightly undercuts credibility on a trust-driven B2B
+    site. A custom mark is high polish-per-effort because it unblocks several things at once. This is
+    a **design task** (designer or logo tool → SVG/PNG asset); then a small wiring job: **Navbar**
+    (`src/components/Navbar.tsx`, currently the lucide icon + wordmark), **Footer**, a real **favicon**
+    (`src/app/icon`), the **OG share card** (`opengraph-image.tsx`), and the **`logo` field in the
+    Organization JSON-LD** (item 27 — an entity-verification signal for Google/AI-search, currently
+    omitted because no asset exists). Not launch-blocking, but a genuine credibility upgrade. Owner/design decision.
 
 **Ongoing habits:** 1–2 blog posts/month (staggered dates — a site where everything is published the same day looks generated); pursue press mentions in Ny Teknik/Verkstadstidningen (backlinks are your main ranking lever since you chose no public directory); Elmia Subcontractor prep; cold-outreach setup per GTM plan (Apollo.io prospect list, LinkedIn sequences); keep CLAUDE.md in sync with reality.
 
