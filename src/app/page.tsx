@@ -18,9 +18,9 @@ export default function HomePage() {
             <p>
               Vi matchar ert behov mot vårt nätverk av industriell
               legotillverkning över hela Sverige. Vi har kartlagt tusentals
-              svenska legotillverkare inom metall, plast &amp; komposit och
-              analyserar löpande finansiell stabilitet, maskinpark,
-              certifieringar och mycket mer. Allt ni behöver göra är att definiera krav, ladda upp
+              svenska legotillverkare inom metall, plast och komposit — och
+              bedömer varje leverantörs maskinpark, certifieringar och
+              finansiella stabilitet. Allt ni behöver göra är att definiera krav, ladda upp
               ritning och få 5 validerade matchningar inom 48 timmar.
             </p>
             <a href="#intent-form" className="btn-primary">
