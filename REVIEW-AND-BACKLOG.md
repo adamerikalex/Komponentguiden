@@ -185,6 +185,34 @@ falsely claiming failure — avoiding duplicate leads. tsc + eslint clean. *Sepa
 if Komponentguiden's Supabase is free-tier it can pause on idle — consider Pro + backups for
 a live lead DB (LAST BACKUP showed "No backups").
 
+**Pre-launch checklist review — implemented (2026-08-13, commit pending).** Reviewed a 20-point
+"things to add before launch" checklist against the site. Most were already done (CTA above the
+fold, internal links, FAQs on all 20 pages, 48h response promise, robots.txt, unique titles + meta
+descriptions, privacy policy, alt text on the real images). **Newly built this pass:**
+
+- **Custom 404** (`src/app/not-found.tsx`) — branded Swedish page with recovery links + `noindex`.
+- **Breadcrumbs** (`src/components/Breadcrumbs.tsx`) — visible trail + BreadcrumbList JSON-LD on all
+  20 category pages (Start › [sektion] › sida) and blog posts (Start › Resurser › titel). Closes the
+  BreadcrumbList gap noted in §5.
+- **Sticky mobile CTA** (`src/components/StickyMobileCTA.tsx`) — mobile-only bottom bar to the form,
+  appears after scrolling past the hero; links to the local `#intent-form` when present, else the
+  homepage form. Added to `layout.tsx`. (Partial mitigation of the ScrollyTelling-mobile gap, item 24.)
+- **On-brand OG image** (`src/app/opengraph-image.tsx`) — replaced the generic teal gradient with an
+  indigo/slate card (logo + tagline + subline). Closes the "off-brand OG image" note in §5.
+
+tsc + eslint clean. New backlog items from the same review:
+
+29. **Dedicated thank-you page (`/tack`).** The form shows an *inline* confirmation, but a distinct
+    URL would let analytics fire a conversion goal and be directly linkable. Small.
+30. **Web analytics.** No visitor analytics today (only the `/admin` intent funnel — that's demand,
+    not traffic). Add **Plausible** (cookieless, GDPR-clean, ~€9/mo — needs account + snippet) or GA4
+    (free but needs a consent banner). Owner decision + signup, then a one-line script add.
+31. **Case studies + real reviews.** Both gated on delivered matches / real customers — plan once
+    matches flow (feed from the outcome data, item 25). Strong E-E-A-T + conversion levers.
+32. **LocalBusiness schema + company location.** Extend the Organization JSON-LD (item 27) with
+    address + geo once org.nr/address are public. Low priority — no walk-in business, so "maps +
+    directions" from the checklist doesn't really apply.
+
 **Ongoing habits:** 1–2 blog posts/month (staggered dates — a site where everything is published the same day looks generated); pursue press mentions in Ny Teknik/Verkstadstidningen (backlinks are your main ranking lever since you chose no public directory); Elmia Subcontractor prep; cold-outreach setup per GTM plan (Apollo.io prospect list, LinkedIn sequences); keep CLAUDE.md in sync with reality.
 
 ---

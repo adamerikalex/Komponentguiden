@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getAllPosts, getPostBySlug, formatDate } from "@/lib/posts";
 import { SITE_URL } from "@/lib/site";
+import Breadcrumbs from "@/components/Breadcrumbs";
 
 export function generateStaticParams() {
   return getAllPosts().map((post) => ({ slug: post.slug }));
@@ -56,6 +57,13 @@ export default async function BloggPostPage({
             url: postUrl,
           }),
         }}
+      />
+      <Breadcrumbs
+        items={[
+          { name: "Start", href: "/" },
+          { name: "Resurser", href: "/blogg" },
+          { name: post.title, href: `/blogg/${post.slug}` },
+        ]}
       />
       <Link href="/blogg" className="back-link">
         ← Tillbaka till resurser

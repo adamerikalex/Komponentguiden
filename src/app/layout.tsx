@@ -3,6 +3,7 @@ import { Inter, Roboto_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import StickyMobileCTA from "@/components/StickyMobileCTA";
 import { SITE_URL } from "@/lib/site";
 
 const inter = Inter({
@@ -57,6 +58,7 @@ export default function RootLayout({
         <Navbar />
         <main>{children}</main>
         <Footer />
+        <StickyMobileCTA />
       </body>
     </html>
   );

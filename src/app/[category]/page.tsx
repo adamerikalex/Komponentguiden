@@ -7,6 +7,14 @@ import {
 import { categoryPages, getCategoryBySlug } from "content/categories";
 import { FAQS } from "content/categories/faq";
 import IntentForm from "@/components/IntentForm";
+import Breadcrumbs from "@/components/Breadcrumbs";
+
+const SECTION_LABELS: Record<string, string> = {
+  metod: "Bearbetningsmetoder",
+  material: "Material",
+  region: "Regioner",
+  bransch: "Branscher",
+};
 
 const ICONS = {
   Zap, Scale, Lock, Network, ShieldCheck, Award, Clock, Search,
@@ -44,6 +52,13 @@ export default async function CategoryPage({
       <section className="cat-hero">
         <div className="container">
           <div className="cat-hero-inner">
+            <Breadcrumbs
+              items={[
+                { name: "Start", href: "/" },
+                { name: SECTION_LABELS[page.section] ?? "Tjänster" },
+                { name: page.h1, href: `/${category}` },
+              ]}
+            />
             <span className="metadata">{page.eyebrow}</span>
             <h1 className="cat-h1">{page.h1}</h1>
             <p className="cat-intro">{page.intro}</p>
