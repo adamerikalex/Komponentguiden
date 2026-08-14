@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Komponentguiden — Varumärke &amp; designsystem</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --slate-navy: #1e2633; --slate: #334155; --indigo: #635bff;
+    --indigo-light: #8b85ff; --indigo-dark: #4f46e5; --turquoise: #008b8b;
+    --canvas: #f4f6f9; --surface: #ffffff; --border: #e2e8f0;
+    --font: 'Inter', system-ui, sans-serif; --mono: 'Roboto Mono', monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font); background: var(--canvas); color: var(--slate-navy); line-height: 1.6; padding: 64px 48px 80px; max-width: 1120px; margin: 0 auto; }
+  .tag { font-family: var(--mono); font-size: 13px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #94a3b8; text-align: right; }
+  .bar { width: 200px; height: 6px; border-radius: 3px; background: linear-gradient(90deg, var(--indigo), var(--turquoise)); margin: 24px 0 20px; }
+  h1 { font-size: 52px; font-weight: 800; letter-spacing: -1.5px; line-height: 1.05; }
+  h2 { font-family: var(--mono); font-size: 13px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #94a3b8; margin: 64px 0 24px; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 28px; }
+  .logo-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .logo-cell { display: flex; align-items: center; justify-content: center; gap: 18px; min-height: 150px; border-radius: 12px; }
+  .lockup { font-size: 30px; font-weight: 800; letter-spacing: -0.8px; }
+  .fav-row { display: flex; align-items: center; gap: 28px; margin-top: 20px; }
+  .fav-chip { display: flex; flex-direction: column; align-items: center; gap: 8px; font-family: var(--mono); font-size: 11px; color: #94a3b8; }
+  .type-item { border-bottom: 1px solid var(--border); padding: 22px 0; }
+  .type-item:last-child { border-bottom: none; }
+  .type-meta { font-size: 14px; color: var(--slate); margin-top: 6px; }
+  .swatches { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .swatch { display: flex; align-items: center; gap: 16px; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 14px 16px; }
+  .chip { width: 54px; height: 54px; border-radius: 12px; flex-shrink: 0; border: 1px solid rgba(0,0,0,0.06); }
+  .sw-hex { font-family: var(--mono); font-size: 14px; font-weight: 700; }
+  .sw-name { font-size: 13px; color: var(--slate); }
+  .note { font-size: 14px; color: var(--slate); margin-top: 20px; }
+  .foot { font-family: var(--mono); font-size: 13px; letter-spacing: 2px; color: #94a3b8; text-align: right; margin-top: 72px; border-top: 1px solid var(--border); padding-top: 20px; }
+  @media (max-width: 720px) { body { padding: 40px 20px; } h1 { font-size: 36px; } .logo-row, .swatches { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+  <div class="tag">Ø KOMPONENTGUIDEN // VARUMÄRKE</div>
+  <div class="bar"></div>
+  <h1>Varumärke &amp;<br />designsystem</h1>
+
+  <h2>Logotyp</h2>
+  <div class="logo-row">
+    <div class="card logo-cell" style="background:#ffffff">
+      <svg width="76" height="76" viewBox="0 0 48 48">
+        <polygon points="24,3 42.2,13.5 42.2,34.5 24,45 5.8,34.5 5.8,13.5" fill="none" stroke="#334155" stroke-width="3.4" stroke-linejoin="round"/>
+        <polygon points="24,11 35,17.5 24,24 13,17.5" fill="#8b85ff"/>
+        <polygon points="13,17.5 24,24 24,37 13,30.5" fill="#4f46e5"/>
+        <polygon points="35,17.5 24,24 24,37 35,30.5" fill="#635bff"/>
+      </svg>
+      <span class="lockup" style="color:#1e2633">Komponentguiden</span>
+    </div>
+    <div class="logo-cell" style="background:#1e2633">
+      <svg width="76" height="76" viewBox="0 0 48 48">
+        <polygon points="24,3 42.2,13.5 42.2,34.5 24,45 5.8,34.5 5.8,13.5" fill="none" stroke="#cbd5e1" stroke-width="3.4" stroke-linejoin="round"/>
+        <polygon points="24,11 35,17.5 24,24 13,17.5" fill="#8b85ff"/>
+        <polygon points="13,17.5 24,24 24,37 13,30.5" fill="#4f46e5"/>
+        <polygon points="35,17.5 24,24 24,37 35,30.5" fill="#635bff"/>
+      </svg>
+      <span class="lockup" style="color:#ffffff">Komponentguiden</span>
+    </div>
+  </div>
+  <div class="card" style="margin-top:20px">
+    <div class="fav-row">
+      <div class="fav-chip">
+        <svg width="40" height="40" viewBox="0 0 48 48"><polygon points="24,3 42.2,13.5 42.2,34.5 24,45 5.8,34.5 5.8,13.5" fill="none" stroke="#334155" stroke-width="3.4" stroke-linejoin="round"/><polygon points="24,11 35,17.5 24,24 13,17.5" fill="#8b85ff"/><polygon points="13,17.5 24,24 24,37 13,30.5" fill="#4f46e5"/><polygon points="35,17.5 24,24 24,37 35,30.5" fill="#635bff"/></svg>
+        40 px
+      </div>
+      <div class="fav-chip">
+        <svg width="24" height="24" viewBox="0 0 48 48"><polygon points="24,3 42.2,13.5 42.2,34.5 24,45 5.8,34.5 5.8,13.5" fill="none" stroke="#334155" stroke-width="3.4" stroke-linejoin="round"/><polygon points="24,11 35,17.5 24,24 13,17.5" fill="#8b85ff"/><polygon points="13,17.5 24,24 24,37 13,30.5" fill="#4f46e5"/><polygon points="35,17.5 24,24 24,37 35,30.5" fill="#635bff"/></svg>
+        24 px
+      </div>
+      <div class="fav-chip">
+        <svg width="16" height="16" viewBox="0 0 48 48"><polygon points="24,3 42.2,13.5 42.2,34.5 24,45 5.8,34.5 5.8,13.5" fill="none" stroke="#334155" stroke-width="3.4" stroke-linejoin="round"/><polygon points="24,11 35,17.5 24,24 13,17.5" fill="#8b85ff"/><polygon points="13,17.5 24,24 24,37 13,30.5" fill="#4f46e5"/><polygon points="35,17.5 24,24 24,37 35,30.5" fill="#635bff"/></svg>
+        16 px (favicon)
+      </div>
+    </div>
+    <p class="note"><strong>Idé:</strong> en komponent som sitter i en precisionsram — hexagonen = precision/industri, den fasetterade kuben = delen som matchas på plats. <strong>Ram:</strong> mjuk slate #334155 på ljust, ljusgrå #cbd5e1 på mörkt. Töj aldrig, rotera inte, byt inte kubens indigo-toner. Håll fri yta runt märket ≥ halva hexagonens höjd.</p>
+  </div>
+
+  <h2>Typografi</h2>
+  <div class="card">
+    <div class="type-item">
+      <div style="font-family:var(--font); font-weight:800; font-size:40px; letter-spacing:-1px;">Inter Black / 800</div>
+      <div class="type-meta">Display, rubriker, logotyp-ordbild — varumärkets röst.</div>
+    </div>
+    <div class="type-item">
+      <div style="font-family:var(--mono); font-weight:700; font-size:26px; letter-spacing:1px;">Roboto Mono — MÄTDATA Ø</div>
+      <div class="type-meta">Metadata, taggar, badges, tekniska etiketter (<code>--font-meta</code>).</div>
+    </div>
+    <div class="type-item">
+      <div style="font-family:var(--font); font-weight:400; font-size:20px;">Inter Regular / 400</div>
+      <div class="type-meta">Brödtext och löpande innehåll — hög läsbarhet. Knappar &amp; nav: Inter 600.</div>
+    </div>
+  </div>
+
+  <h2>Färgpalett</h2>
+  <div class="swatches">
+    <div class="swatch"><div class="chip" style="background:#1e2633"></div><div><div class="sw-hex">#1e2633</div><div class="sw-name">Slate Navy — rubriker</div></div></div>
+    <div class="swatch"><div class="chip" style="background:#334155"></div><div><div class="sw-hex">#334155</div><div class="sw-name">Slate mjuk — text, logotypram</div></div></div>
+    <div class="swatch"><div class="chip" style="background:#635bff"></div><div><div class="sw-hex">#635bff</div><div class="sw-name">Indigo — accent, knappar</div></div></div>
+    <div class="swatch"><div class="chip" style="background:#8b85ff"></div><div><div class="sw-hex">#8b85ff</div><div class="sw-name">Indigo ljus — logotyp topp</div></div></div>
+    <div class="swatch"><div class="chip" style="background:#4f46e5"></div><div><div class="sw-hex">#4f46e5</div><div class="sw-name">Indigo mörk — logotyp skugga</div></div></div>
+    <div class="swatch"><div class="chip" style="background:#008b8b"></div><div><div class="sw-hex">#008b8b</div><div class="sw-name">Turkos — metadata, taggar</div></div></div>
+    <div class="swatch"><div class="chip" style="background:#f4f6f9"></div><div><div class="sw-hex">#f4f6f9</div><div class="sw-name">Canvas — sidbakgrund</div></div></div>
+    <div class="swatch"><div class="chip" style="background:#ffffff"></div><div><div class="sw-hex">#ffffff</div><div class="sw-name">Yta — kort, formulär</div></div></div>
+    <div class="swatch"><div class="chip" style="background:#e2e8f0"></div><div><div class="sw-hex">#e2e8f0</div><div class="sw-name">Kantlinje — ramar</div></div></div>
+  </div>
+
+  <div class="foot">KOMPONENTGUIDEN.SE</div>
+</body>
+</html>

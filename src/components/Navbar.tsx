@@ -3,7 +3,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Layers, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
+import LogoMark from "@/components/LogoMark";
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -14,7 +15,7 @@ export default function Navbar() {
     <nav className="main-nav">
       <div className="container nav-container">
         <Link href="/" className="logo" onClick={close}>
-          <Layers size={22} className="logo-icon" />
+          <LogoMark size={24} className="logo-icon" />
           Komponentguiden
         </Link>
         <button

@@ -25,20 +25,17 @@ export default function Image() {
       >
         {/* Wordmark row */}
         <div style={{ display: "flex", alignItems: "center", marginBottom: "34px" }}>
-          <svg
-            width="60"
-            height="60"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="#635bff"
-            strokeWidth="1.6"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            style={{ marginRight: "20px" }}
-          >
-            <polygon points="12 2 2 7 12 12 22 7 12 2" />
-            <polyline points="2 17 12 22 22 17" />
-            <polyline points="2 12 12 17 22 12" />
+          <svg width="60" height="60" viewBox="0 0 48 48" style={{ marginRight: "20px" }}>
+            <polygon
+              points="24,3 42.2,13.5 42.2,34.5 24,45 5.8,34.5 5.8,13.5"
+              fill="none"
+              stroke="#cbd5e1"
+              strokeWidth="3.4"
+              strokeLinejoin="round"
+            />
+            <polygon points="24,11 35,17.5 24,24 13,17.5" fill="#8b85ff" />
+            <polygon points="13,17.5 24,24 24,37 13,30.5" fill="#4f46e5" />
+            <polygon points="35,17.5 24,24 24,37 35,30.5" fill="#635bff" />
           </svg>
           <div style={{ color: "#ffffff", fontSize: "40px", fontWeight: 700, letterSpacing: "-0.5px" }}>
             Komponentguiden

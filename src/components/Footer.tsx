@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Layers } from "lucide-react";
+import LogoMark from "@/components/LogoMark";
 
 export default function Footer() {
   return (
@@ -8,7 +8,7 @@ export default function Footer() {
         <div className="footer-grid">
           <div className="footer-col">
             <Link href="/" className="logo" style={{ marginBottom: "16px" }}>
-              <Layers size={20} className="logo-icon" />
+              <LogoMark size={22} className="logo-icon" />
               Komponentguiden
             </Link>
             <p style={{ fontSize: "14px", maxWidth: "300px" }}>

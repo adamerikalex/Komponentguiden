@@ -43,6 +43,7 @@ export default function RootLayout({
               "@type": "Organization",
               name: "Komponentguiden",
               url: SITE_URL,
+              logo: `${SITE_URL}/logo.svg`,
               description:
                 "B2B-matchning för industriell legotillverkning i Sverige. Köpare beskriver sitt behov och matchas mot validerade svenska legotillverkare inom 48 timmar.",
               areaServed: { "@type": "Country", name: "Sverige" },
