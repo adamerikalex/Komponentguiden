@@ -14,6 +14,9 @@ export default function StickyMobileCTA() {
   const [isMobile, setIsMobile] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [href, setHref] = useState("/#intent-form");
+  // Hide the sticky CTA when the form itself is on screen — otherwise it sits
+  // right on top of the real submit button (two identical buttons).
+  const [formInView, setFormInView] = useState(false);
 
   useEffect(() => {
     const mq = window.matchMedia("(max-width: 768px)");
@@ -30,15 +33,29 @@ export default function StickyMobileCTA() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Re-check the form target after each navigation (layout persists across routes).
+  // After each navigation (layout persists across routes): point the CTA at the
+  // local form if the page has one, and watch that form so we can hide the CTA
+  // while it's visible.
   useEffect(() => {
+    let observer: IntersectionObserver | null = null;
     const t = setTimeout(() => {
-      setHref(document.getElementById("intent-form") ? "#intent-form" : "/#intent-form");
+      const form = document.getElementById("intent-form");
+      setHref(form ? "#intent-form" : "/#intent-form");
+      setFormInView(false);
+      if (form && "IntersectionObserver" in window) {
+        observer = new IntersectionObserver(
+          (entries) => setFormInView(entries[0]?.isIntersecting ?? false)
+        );
+        observer.observe(form);
+      }
     }, 100);
-    return () => clearTimeout(t);
+    return () => {
+      clearTimeout(t);
+      if (observer) observer.disconnect();
+    };
   }, [pathname]);
 
-  if (!isMobile || !scrolled) return null;
+  if (!isMobile || !scrolled || formInView) return null;
 
   const style: React.CSSProperties = {
     position: "fixed",
