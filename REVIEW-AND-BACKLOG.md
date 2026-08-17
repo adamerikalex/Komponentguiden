@@ -246,6 +246,13 @@ tsc + eslint clean. New backlog items from the same review:
     **Remaining v0 (operational, not code):** (1) run the migration in Supabase before deploy; (2) the Masterbase
     push of *approved* profiles into `company_capabilities` (v0 = script; v1 = scoped endpoint); (3) the Resend
     outbound invite to non-`reklamsparr` unpopulated suppliers linking to `/for-leverantorer`.
+    **Added 2026-08-17:** an **"Övrigt" catch-all free-text field** (`ovrigt` column, migration
+    `20260817_b_supplier_submissions_ovrigt.sql`) — the controlled chips stay the matching vocabulary, but
+    suppliers can describe anything not in the lists; it's captured + reviewed (human maps to slugs / proposes
+    new ones), never a direct matching input. Plus a **supply funnel + KPIs on `/admin/leverantorer`** (inkomna
+    → kvalificerade → godkända, KPI cards, top material/kapabilitet bars) — the supply-side counterpart to the
+    demand dashboard (item 28), which is demand-only. *Open taxonomy call (item 26):* promote `montering-kvalitet`
+    (assembly/kablage) to a real method chip vs. leaving it to Övrigt.
 
 **Ongoing habits:** 1–2 blog posts/month (staggered dates — a site where everything is published the same day looks generated); pursue press mentions in Ny Teknik/Verkstadstidningen (backlinks are your main ranking lever since you chose no public directory); Elmia Subcontractor prep; cold-outreach setup per GTM plan (Apollo.io prospect list, LinkedIn sequences); keep CLAUDE.md in sync with reality.
 

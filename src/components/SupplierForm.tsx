@@ -59,6 +59,7 @@ type FormState = {
   processSlugs: string[];
   surfaceSlugs: string[];
   surfaceOther: string;
+  ovrigt: string;
   certs: string[];
   certDetails: string;
   maskinpark: string;
@@ -70,7 +71,7 @@ type FormState = {
 
 const initial: FormState = {
   orgNr: "", companyName: "", contactName: "", yrkesroll: "", email: "", phone: "",
-  materials: [], methods: [], processSlugs: [], surfaceSlugs: [], surfaceOther: "",
+  materials: [], methods: [], processSlugs: [], surfaceSlugs: [], surfaceOther: "", ovrigt: "",
   certs: [], certDetails: "", maskinpark: "", kapacitet: "", regionSlugs: [],
   consentMatch: false, consentContact: false,
 };
@@ -151,6 +152,7 @@ export default function SupplierForm() {
         process_slugs: form.processSlugs,
         surface_slugs: form.surfaceSlugs,
         surface_treatment: form.surfaceOther.trim() || null,
+        ovrigt: form.ovrigt.trim() || null,
         cert_slugs: certSlugs,
         certs: form.certs.length ? form.certs : null,
         cert_details: form.certDetails.trim() || null,
@@ -270,6 +272,10 @@ export default function SupplierForm() {
               <input className="input-field" value={form.surfaceOther}
                 onChange={(e) => set("surfaceOther", e.target.value)}
                 placeholder="Annan ytbehandling (frivilligt)" />
+              <label className="input-label">Övrigt (frivilligt)</label>
+              <textarea className="input-field" rows={2} value={form.ovrigt}
+                onChange={(e) => set("ovrigt", e.target.value)}
+                placeholder="Gör ni något vi missat i listorna ovan? Beskriv annat material, metod eller förmåga så tar vi hand om det." />
             </div>
 
             {/* Maskinpark */}
