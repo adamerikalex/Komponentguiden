@@ -279,26 +279,34 @@ Masterbase already has a rich, partly-automated pipeline — **financials/iXBRL*
 6. **Runbook leftovers:** validation checks in import endpoints (#5), monthly score-snapshot (#6), Tier 3 seed (#7), `refresh materialized view coverage;` after batches, strip stale "UTKAST" migration headers.
 7. *(Separate M&A track)* förvärvsradar / lazy-twins enrichment consuming `c`'s dividend + credit signals — investment thesis, not needed for matching.
 
-8. **Employee count (`antal_anstallda`) mostly null — column mismatch (INVESTIGATING, paused 2026-08-13).**
-   The iXBRL parser *does* extract employees (`api/enrich-arsredovisning.js` + `src/lib/financial.js` map
-   the tags `medelantaletanstallda`/`antalanstallda`) — but it writes the value to **`antal_anstallda_senaste`**,
-   while the `metalbase` size-floor reads plain **`antal_anstallda`** (only the allabolag importer fills
-   that, "fyll-bara-tomt"). So the *revenue* floor uses a report column (`omsattning_senaste`, populated)
-   while the *employee* floor reads a mostly-empty column. Likely compounded by (a) many companies having
-   no parsed report at all (~half the universe), and (b) possible tag-alias gaps in the parser.
-   **Next step when the DB is back:** run the decomposition query (`total` / `med_parsad_arsred` /
-   `har_senaste_kolumn` / `har_floor_kolumn` / `mismatch_null_men_senaste`) over SNI 22/24/25 to size each
-   cause. If `mismatch_null_men_senaste` is large, the fix is a one-line view change —
-   `coalesce(c.antal_anstallda_senaste, c.antal_anstallda, 0)` in the size floor **and** the `25530 ≥3`
-   special case **and** `metalbase_public.storleksklass` banding (all read `antal_anstallda` today). That
-   lifts `uppfyller_storleksgolv` (now 1 719) → **re-export the scrape cohort afterwards.**
+8. ~~**Employee count (`antal_anstallda`) mostly null — column mismatch.**~~ **DONE 2026-08-17.**
+   The iXBRL parser extracts employees (`api/enrich-arsredovisning.js` + `src/lib/financial.js`, tags
+   `medelantaletanstallda`/`antalanstallda`) but writes them to **`antal_anstallda_senaste`**, while the
+   `metalbase` size-floor read plain **`antal_anstallda`** (only the allabolag importer fills that). Revenue
+   was unaffected — `omsattning_senaste` is both written and read. **Diagnosis** (SNI 22/24/25, active,
+   total 8 006): floor column populated for **128**, report column for **2 825**, **2 698** null-in-floor
+   but present in `_senaste`. **Fix:** migration `20260817_metalbase_floor_anstallda_senaste.sql` — the
+   floor, the `25530 ≥3` special case, and `metalbase_public.storleksklass` now read
+   `coalesce(antal_anstallda_senaste, antal_anstallda)` (drop+recreate chain). **Result:**
+   `uppfyller_storleksgolv` **1 719 → 1 917** (+198 — ≥5-employee / <5 MSEK workshops; the rest already
+   passed on revenue), and the scrape-cohort CSV now carries populated employee counts. Cohort re-exported.
 
 9. **Masterbase DB resource exhaustion (2026-08-13).** The project showed "exhausting multiple resources";
    even lightweight queries and `pg_stat_activity` timed out — most likely stuck server-side queries left
    by timed-out SQL-editor runs (a client timeout does NOT cancel the server query). **Fix:** restart the
    project from the Supabase dashboard (coordinate with co-founder — shared DB). If it recurs on its own
    without heavy queries, the compute tier (NANO) is likely undersized for 689k rows + embeddings + nightly
-   crons → discuss bumping Masterbase compute. *(Session paused here awaiting co-founder + DB recovery.)*
+   crons → discuss bumping Masterbase compute. *(DB recovered 2026-08-17; queries ran fine after.)*
+
+10. **EBITDA + Tier-4 M&A metrics not stored broadly (noted 2026-08-17).** `ebitda_senaste` was populated
+    for only **10** of 8 006 companies. The parser *computes* a full M&A layer (`deriveMnaMetrics` in
+    `src/lib/financial.js`: EBITDA, net debt, FCF, cash conversion, Rule of 40, ROCE, per-employee) but
+    apparently only persists it for shortlisted förvärvsradar deep-dives, not the base enrichment.
+    **Harmless for matching** — the `stabilitetsklass` band only uses EBITDA as an OR-fallback that
+    `arets_resultat_senaste` (3 747 populated) already covers. Revisit only if EBITDA/FCF are wanted
+    broadly for M&A / lazy-twin scoring — likely the same write-gap pattern as employees was (computed
+    but not written back to `companies`). Base financials (revenue, solvency, result, margins, health
+    score) *are* written for every parsed report — see the parser's field tiers in `src/lib/financial.js`.
 
 **Queue selector** (`enrichment_queue` view, migration b): prioritises `tier (SNI) × size (ln employees) × data-gaps` — *not* pure SNI; self-rebalances as gaps fill (core SNI-25 + larger + most-incomplete first).
 
