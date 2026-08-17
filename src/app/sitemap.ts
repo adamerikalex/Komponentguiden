@@ -12,6 +12,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "",
     "/concierge",
     "/om-oss",
+    "/for-leverantorer",
     "/akut",
     "/support",
     "/sekretesspolicy",

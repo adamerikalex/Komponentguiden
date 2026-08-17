@@ -28,6 +28,9 @@ export default function Footer() {
               <li>
                 <Link href="/om-oss">Om oss</Link>
               </li>
+              <li>
+                <Link href="/for-leverantorer">För leverantörer</Link>
+              </li>
             </ul>
           </div>
           <div className="footer-col">

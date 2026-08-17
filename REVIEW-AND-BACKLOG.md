@@ -236,6 +236,17 @@ tsc + eslint clean. New backlog items from the same review:
     Resend invite (approved pushed to Masterbase by script); **v1** automated scoped write endpoint; **v2**
     "claim your profile" pre-fill from scraped data. Full detail + open decisions in the spec.
 
+    **v0 BUILT 2026-08-17 (commit pending):** migration `supabase/migrations/20260817_supplier_submissions.sql`
+    (KG Supabase, anon-INSERT RLS, same slug vocabulary as `intent_requests`); `src/components/SupplierForm.tsx`
+    (the IntentForm inverted — multi-select materials/methods, optional process/surface/cert chips, machine-park
+    + capacity free text, län, org-nr checksum, dual opt-in consent, honeypot; cert claim without number/issuer
+    or free-mail → `needs_review`); public `/for-leverantorer` onboarding page (added to nav + footer + sitemap,
+    one-way, not browsable); `/admin/leverantorer` review page + `reviewSubmission` action (approve/reject, behind
+    the existing Basic-Auth). Writes to `supplier_submissions` with `source='sjalvrapporterad'`. tsc + eslint clean.
+    **Remaining v0 (operational, not code):** (1) run the migration in Supabase before deploy; (2) the Masterbase
+    push of *approved* profiles into `company_capabilities` (v0 = script; v1 = scoped endpoint); (3) the Resend
+    outbound invite to non-`reklamsparr` unpopulated suppliers linking to `/for-leverantorer`.
+
 **Ongoing habits:** 1–2 blog posts/month (staggered dates — a site where everything is published the same day looks generated); pursue press mentions in Ny Teknik/Verkstadstidningen (backlinks are your main ranking lever since you chose no public directory); Elmia Subcontractor prep; cold-outreach setup per GTM plan (Apollo.io prospect list, LinkedIn sequences); keep CLAUDE.md in sync with reality.
 
 ---
