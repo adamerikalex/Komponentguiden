@@ -222,6 +222,19 @@ tsc + eslint clean. New backlog items from the same review:
     **`logo` field added to the Organization JSON-LD** (`${SITE_URL}/logo.svg`) — this also closes the
     logo half of item 27 (org.nr `identifier` still pending "once public"). A brand one-pager lives at
     `docs/brand.html` (logo, colours, fonts). tsc + eslint clean.
+34. **Supplier self-input channel — supply-side capability intake.** *(Spec: `docs/supplier-input-spec.md`,
+    2026-08-17.)* A consent-based, source-tagged, org-nr-verified channel for suppliers to submit their own
+    capability profiles — complements web-scraping (fills the ~30–40% it can't reach: no site / JS /
+    `no_data`), captures consent (cleans up provenance), and builds the supply-side flywheel + Concierge/M&A
+    on-ramp. **Not** a public directory — that would kill demand intake and expose the moat; suppliers
+    see/edit only their **own** record. Writes to Masterbase `company_capabilities` with
+    `source='sjalvrapporterad'` + confidence via a **scoped path (never the service key)**; certs stored
+    `ej verifierad` until number/issuer checked (anti-gaming — self-report has a lead-gaming incentive).
+    Reuses IntentForm patterns (`src/lib/validation.ts` org-nr checksum, `src/lib/taxonomy.ts` slug mapping —
+    it's "the IntentForm inverted") + Resend for outbound to **non-`reklamsparr`** unpopulated suppliers.
+    Phasing: **v0** form + `supplier_submissions` table + `/admin` review + public `/for-leverantorer` page +
+    Resend invite (approved pushed to Masterbase by script); **v1** automated scoped write endpoint; **v2**
+    "claim your profile" pre-fill from scraped data. Full detail + open decisions in the spec.
 
 **Ongoing habits:** 1–2 blog posts/month (staggered dates — a site where everything is published the same day looks generated); pursue press mentions in Ny Teknik/Verkstadstidningen (backlinks are your main ranking lever since you chose no public directory); Elmia Subcontractor prep; cold-outreach setup per GTM plan (Apollo.io prospect list, LinkedIn sequences); keep CLAUDE.md in sync with reality.
 
