@@ -52,6 +52,24 @@ gaming incentive (claim everything to catch more matches). So:
 
 ## 4. Data model & write path
 
+**Which database holds what — and why (a deliberate split).** A submission is split across the two
+databases on purpose:
+
+- The **raw submission** — contact details, consent choices, org-nr, validation status, and an audit copy
+  of exactly what was typed — **stays in Komponentguiden**. It's the supply-side mirror of `intent_requests`:
+  the intake / relationship record ("who reached out, what they said, what they agreed to").
+- The **validated capabilities** it produces — taxonomy slugs, machines, certs — are **written into
+  Masterbase** (`company_capabilities` / `company_certifications`), merged onto the *same company row* as any
+  scraped capabilities, differentiated only by the `source` tag.
+
+**Rationale:** all supply data must live in **one place (Masterbase)** so the matching engine reads a single
+source. If self-reported capabilities lived only in Komponentguiden, the supply base would be forked across
+two databases and matching would have to stitch them together. Keeping scraped + self-reported in the same
+`company_capabilities` table (differentiated only by `source`) means they blend into one profile per company
+and matching is source-agnostic. Plainly: **Komponentguiden = the submission (inbox); Masterbase = the
+capabilities that submission yields (the supply base matching reads).** (Keeping everything in Komponentguiden
+was considered and rejected — it would fork the supply data and complicate matching.)
+
 **Collection (Komponentguiden Supabase):** a `supplier_submissions` table — raw submission + identity +
 consent + `qualification_status` + timestamps + audit of the exact payload. Mirrors how `intent_requests`
 works on the demand side.
