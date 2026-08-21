@@ -253,6 +253,20 @@ tsc + eslint clean. New backlog items from the same review:
     → kvalificerade → godkända, KPI cards, top material/kapabilitet bars) — the supply-side counterpart to the
     demand dashboard (item 28), which is demand-only. *Open taxonomy call (item 26):* promote `montering-kvalitet`
     (assembly/kablage) to a real method chip vs. leaving it to Övrigt.
+35. **Proposal v2 — supplier profile pages + brokered intro.** *(Spec: `docs/proposal-v2-spec.md`, 2026-08-17.)*
+    Turns the tokenized proposal (`/forslag/[token]`) into an interactive shortlist: clickable per-supplier
+    profile pages, per-supplier engagement tracking (new `intent_events` stages `viewed_supplier` +
+    `intro_requested` — no schema change, uses the `meta` jsonb), and a **"Låt oss introducera er"**
+    brokered-intro CTA that logs the connection event + notifies Alexander (Resend) to broker. The
+    connective tissue between the demand funnel and the supplier-input channel — a warm KG lead is the
+    supplier's value prop. **v0** (now, no dependency): profiles show current match data + view/intro
+    tracking + KG-brokered notify. **v1** (gated on the `metalbase_reader` JWT, §8): rich profiles from
+    `metalbase_public`/`company_capabilities` (where self-input profiles pay off) + auto-email consented
+    suppliers. Non-negotiables: private/tokenized, respect consent + `reklamsparr`, no financials to buyers,
+    preserve buyer relationship ownership. Open decisions (broker-only vs +direct; anonymize buyer; route vs
+    inline) in the spec. **Also fixed 2026-08-17:** the proposal feedback buttons now show a confirmed state
+    after clicking (the write always worked — the page just didn't reflect it) and are restyled solid indigo
+    / burgundy (`--urgent`).
 
 **Ongoing habits:** 1–2 blog posts/month (staggered dates — a site where everything is published the same day looks generated); pursue press mentions in Ny Teknik/Verkstadstidningen (backlinks are your main ranking lever since you chose no public directory); Elmia Subcontractor prep; cold-outreach setup per GTM plan (Apollo.io prospect list, LinkedIn sequences); keep CLAUDE.md in sync with reality.
 
