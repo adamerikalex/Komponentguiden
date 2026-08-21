@@ -7,6 +7,7 @@ export const dynamic = "force-dynamic";
 const NAVY = "var(--slate-navy, #1e2633)";
 const NAVY_LIGHT = "var(--slate-navy-light, #334155)";
 const INDIGO = "var(--indigo, #635bff)";
+const URGENT = "var(--urgent, #b05252)";
 const BORDER = "var(--border, #e2e8f0)";
 const SURFACE = "var(--surface, #ffffff)";
 
@@ -68,6 +69,20 @@ export default async function ProposalPage({ params }: { params: Promise<{ token
     .order("rank", { ascending: true });
   const matches = (mData ?? []) as Match[];
 
+  // Recorded feedback per supplier, so a click shows a confirmed state (the write
+  // succeeds server-side; without this the page re-rendered identically and the
+  // buttons looked dead).
+  const { data: fbData } = await admin
+    .from("intent_events")
+    .select("meta")
+    .eq("intent_id", intent.id)
+    .eq("stage", "responded");
+  const feedback = new Map<string, string>();
+  (fbData ?? []).forEach((e) => {
+    const meta = (e as { meta: { supplier?: string; kind?: string } | null }).meta;
+    if (meta?.supplier) feedback.set(meta.supplier, meta.kind ?? "");
+  });
+
   // Log 'engaged' once on first view (opened/klickat).
   const { count } = await admin
     .from("intent_events")
@@ -94,20 +109,26 @@ export default async function ProposalPage({ params }: { params: Promise<{ token
               {[m.supplier_org_nr, m.supplier_lan].filter(Boolean).join(" · ") || ""}
             </div>
             {m.supplier_note && <p style={{ color: NAVY_LIGHT, fontSize: 14, margin: "8px 0 0" }}>{m.supplier_note}</p>}
-            <div style={{ display: "flex", gap: 10, marginTop: 12 }}>
-              <form action={recordFeedback}>
-                <input type="hidden" name="token" value={token} />
-                <input type="hidden" name="supplier" value={m.supplier_name} />
-                <input type="hidden" name="kind" value="kontakt" />
-                <button type="submit" style={{ fontSize: 13, padding: "6px 12px", borderRadius: 8, border: `1px solid ${INDIGO}`, background: "none", color: INDIGO, cursor: "pointer" }}>Vi tog kontakt</button>
-              </form>
-              <form action={recordFeedback}>
-                <input type="hidden" name="token" value={token} />
-                <input type="hidden" name="supplier" value={m.supplier_name} />
-                <input type="hidden" name="kind" value="ej-relevant" />
-                <button type="submit" style={{ fontSize: 13, padding: "6px 12px", borderRadius: 8, border: `1px solid ${BORDER}`, background: "none", color: NAVY_LIGHT, cursor: "pointer" }}>Inte relevant</button>
-              </form>
-            </div>
+            {feedback.has(m.supplier_name) ? (
+              <div style={{ marginTop: 12, fontSize: 13.5, fontWeight: 600, color: feedback.get(m.supplier_name) === "kontakt" ? INDIGO : NAVY_LIGHT }}>
+                {feedback.get(m.supplier_name) === "kontakt" ? "✓ Ni har markerat att ni tog kontakt" : "Markerad som inte relevant"}
+              </div>
+            ) : (
+              <div style={{ display: "flex", gap: 10, marginTop: 12 }}>
+                <form action={recordFeedback}>
+                  <input type="hidden" name="token" value={token} />
+                  <input type="hidden" name="supplier" value={m.supplier_name} />
+                  <input type="hidden" name="kind" value="kontakt" />
+                  <button type="submit" style={{ fontSize: 13.5, padding: "8px 15px", borderRadius: 8, border: "none", background: INDIGO, color: "#fff", fontWeight: 600, cursor: "pointer" }}>Vi tog kontakt</button>
+                </form>
+                <form action={recordFeedback}>
+                  <input type="hidden" name="token" value={token} />
+                  <input type="hidden" name="supplier" value={m.supplier_name} />
+                  <input type="hidden" name="kind" value="ej-relevant" />
+                  <button type="submit" style={{ fontSize: 13.5, padding: "8px 15px", borderRadius: 8, border: "none", background: URGENT, color: "#fff", fontWeight: 600, cursor: "pointer" }}>Inte relevant</button>
+                </form>
+              </div>
+            )}
           </div>
         ))}
       </div>
