@@ -162,6 +162,9 @@ export default async function AdminDashboard({
         <div>
           <span className="metadata">Intern · demand funnel</span>
           <h1 style={{ fontSize: 28, color: NAVY, margin: "6px 0 0" }}>Efterfrågedashboard</h1>
+          <Link href="/admin/leverantorer" style={{ fontSize: 13, color: INDIGO, textDecoration: "none", display: "inline-block", marginTop: 8 }}>
+            Leverantörsprofiler (utbud) →
+          </Link>
         </div>
         <form method="get" style={{ display: "flex", gap: 8, alignItems: "flex-end", fontSize: 13 }}>
           <label style={{ color: NAVY_LIGHT }}>Från<br /><input type="date" name="from" defaultValue={from} className="input-field" style={{ padding: 6 }} /></label>
