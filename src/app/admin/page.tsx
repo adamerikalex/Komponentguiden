@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getAdminClient } from "@/lib/supabaseAdmin";
+import AdminNav from "@/components/AdminNav";
 import { LAN_GROUPS } from "@/lib/taxonomy";
 
 // Always render at request time (reads live data, uses the service-role key).
@@ -158,13 +159,11 @@ export default async function AdminDashboard({
 
   return (
     <div style={{ maxWidth: 1080, margin: "0 auto", padding: "40px 24px 80px" }}>
+      <AdminNav active="demand" />
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", flexWrap: "wrap", gap: 12 }}>
         <div>
           <span className="metadata">Intern · demand funnel</span>
           <h1 style={{ fontSize: 28, color: NAVY, margin: "6px 0 0" }}>Efterfrågedashboard</h1>
-          <Link href="/admin/leverantorer" style={{ fontSize: 13, color: INDIGO, textDecoration: "none", display: "inline-block", marginTop: 8 }}>
-            Leverantörsprofiler (utbud) →
-          </Link>
         </div>
         <form method="get" style={{ display: "flex", gap: 8, alignItems: "flex-end", fontSize: 13 }}>
           <label style={{ color: NAVY_LIGHT }}>Från<br /><input type="date" name="from" defaultValue={from} className="input-field" style={{ padding: 6 }} /></label>

@@ -1,6 +1,6 @@
-import Link from "next/link";
 import { getAdminClient } from "@/lib/supabaseAdmin";
 import { reviewSubmission } from "./actions";
+import AdminNav from "@/components/AdminNav";
 
 export const dynamic = "force-dynamic";
 
@@ -122,8 +122,8 @@ export default async function AdminLeverantorerPage() {
 
   return (
     <div style={{ maxWidth: 820, margin: "0 auto", padding: "32px 24px 80px" }}>
-      <Link href="/admin" style={{ fontSize: 13, color: INDIGO }}>← Tillbaka till dashboard</Link>
-      <h1 style={{ fontSize: 24, color: NAVY, margin: "10px 0 0" }}>Leverantörsprofiler</h1>
+      <AdminNav active="supply" />
+      <h1 style={{ fontSize: 24, color: NAVY, margin: "0" }}>Leverantörsprofiler</h1>
       <p style={{ color: NAVY_LIGHT, fontSize: 14, margin: "4px 0 0" }}>
         Självrapporterade profiler från /for-leverantorer. Godkänn för att flagga för push till
         Masterbase <code>company_capabilities</code> (source=sjalvrapporterad).
